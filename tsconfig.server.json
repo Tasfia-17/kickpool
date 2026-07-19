@@ -11,14 +11,33 @@
         "outDir": "./dist",
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "strict": false
+        "strict": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false
     },
     "include": [
         "server/**/*.ts",
-        "src/lib/**/*.ts"
+        "src/lib/logger.ts",
+        "src/lib/txline.ts",
+        "src/lib/aiPundit.ts",
+        "src/lib/xp.ts",
+        "src/lib/rateLimiterRedis.ts",
+        "src/lib/socketRedisAdapter.ts",
+        "src/lib/metrics.ts",
+        "src/lib/adminBridge.ts",
+        "src/lib/redis.ts",
+        "src/lib/prisma.ts",
+        "src/lib/cache.ts",
+        "src/lib/constants.ts",
+        "src/lib/utils.ts"
     ],
     "exclude": [
         "node_modules",
-        ".next"
+        ".next",
+        "src/lib/auth.ts",
+        "src/lib/email.ts",
+        "src/lib/security.ts",
+        "src/lib/i18n.tsx",
+        "src/lib/errorMonitor.tsx"
     ]
 }
