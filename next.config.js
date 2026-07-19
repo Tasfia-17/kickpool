@@ -6,12 +6,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
-  // Do NOT use standalone — causes extra memory and breaks Vercel
-  // output: 'standalone',
 
   images: {
     remotePatterns: [
@@ -29,12 +23,17 @@ const nextConfig = {
       : false,
   },
 
-  // No turbopack — it was causing OOM on large CSS files
+  // Next.js 16 uses Turbopack by default.
+  // Empty turbopack config silences the "webpack config but no turbopack config" error.
+  // The webpack fallbacks below are handled automatically by Turbopack.
+  turbopack: {},
+
   experimental: {
     optimizeCss: false,
     optimizePackageImports: ['lucide-react', 'motion', 'socket.io-client'],
   },
 
+  // Keep webpack config for non-Turbopack contexts (local dev with --webpack flag, etc.)
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -44,9 +43,7 @@ const nextConfig = {
         tls: false,
         crypto: false,
       };
-    }
-    // Exclude heavy server-only Solana/Anchor packages from client bundle
-    if (!isServer) {
+      // Exclude heavy server-only Solana/Anchor packages from client bundle
       config.externals = [
         ...(config.externals || []),
         '@coral-xyz/anchor',
