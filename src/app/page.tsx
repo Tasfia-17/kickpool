@@ -11,9 +11,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import { Trophy, Users, Zap, Shield, Plus, ChevronRight, Clock } from 'lucide-react';
+import { TxLineSubscribe } from '@/components/txline/TxLineSubscribe';
 
 interface PoolCard {
   id:              string;
@@ -89,8 +90,15 @@ function PoolCard({ pool }: { pool: PoolCard }) {
 
 export default function KickPoolHomepage() {
   const { data: session } = useSession();
-  const [pools, setPools] = useState<PoolCard[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [pools, setPools]           = useState<PoolCard[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [subscribed, setSubscribed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setSubscribed(localStorage.getItem('txline_subscribed') === 'true');
+    }
+  }, []);
 
   useEffect(() => {
     fetch('/api/pools?status=PENDING,LIVE')
@@ -99,6 +107,13 @@ export default function KickPoolHomepage() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  const handleActivated = (_token: string, _wallet: string) => {
+    setSubscribed(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('txline_subscribed', 'true');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -208,6 +223,20 @@ export default function KickPoolHomepage() {
           ))}
         </div>
       </div>
+
+      {/* TxLINE on-chain subscribe banner — shown until activated */}
+      <AnimatePresence>
+        {!subscribed && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="max-w-2xl mx-auto px-4 pt-6"
+          >
+            <TxLineSubscribe onActivated={handleActivated} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Pool listings */}
       <div className="max-w-2xl mx-auto px-4 py-6">

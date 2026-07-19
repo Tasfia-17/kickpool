@@ -228,48 +228,65 @@ export async function generateAICommentary(
 // ─── TxLINE event → PunditContext mapper ────────────────────────────────────
 
 import type { TxLineScoreEvent, TxLineOddsEvent } from './txline';
-import { extractGoals, extractResult1x2, gameStateLabel } from './txline';
+import { extractGoals, extractResult1x2, gameStateLabel, STAT_KEYS } from './txline';
 
 export function mapTxLineEventToPunditContext(
   scoreEvent: TxLineScoreEvent,
   latestOdds: TxLineOddsEvent | null,
   participant1: string,
   participant2: string,
-  prevScore?: { p1: number; p2: number }
+  prevScore?: { p1: number; p2: number },
+  prevStats?: Record<number, number>
 ): PunditContext | null {
-  const goals = extractGoals(scoreEvent.Stats);
-  const odds  = extractResult1x2(latestOdds);
+  const goals  = extractGoals(scoreEvent.Stats);
+  const odds   = extractResult1x2(latestOdds);
   const period = gameStateLabel(scoreEvent.statusId);
 
   const base: Omit<PunditContext, 'eventType'> = {
     participant1,
     participant2,
-    score1:    goals.p1,
-    score2:    goals.p2,
+    score1:   goals.p1,
+    score2:   goals.p2,
     period,
-    homeOdds:  odds.home,
-    drawOdds:  odds.draw,
-    awayOdds:  odds.away,
+    homeOdds: odds.home,
+    drawOdds: odds.draw,
+    awayOdds: odds.away,
   };
 
-  // Goal detected
+  // Goal detected (score changed)
   if (prevScore && (goals.p1 > prevScore.p1 || goals.p2 > prevScore.p2)) {
+    // Check own_goal first
+    if (scoreEvent.action === 'own_goal') {
+      const team = goals.p1 > prevScore.p1 ? participant1 : participant2;
+      return { ...base, eventType: 'own_goal', team };
+    }
     const scoringTeam = goals.p1 > prevScore.p1 ? participant1 : participant2;
     return { ...base, eventType: 'goal', team: scoringTeam };
   }
 
-  // Own goal
+  // Own goal without score change (edge case)
   if (scoreEvent.action === 'own_goal') {
     return { ...base, eventType: 'own_goal' };
   }
 
-  // Cards
-  const prevYellow = { p1: prevScore?.p1 ?? 0, p2: prevScore?.p2 ?? 0 };
-  if (scoreEvent.action === 'yellow_card') {
-    return { ...base, eventType: 'yellow_card' };
-  }
+  // Red card — use stat delta to identify team
   if (scoreEvent.action === 'red_card') {
-    return { ...base, eventType: 'red_card' };
+    const p1Prev = prevStats?.[STAT_KEYS.P1_RED_CARDS] ?? 0;
+    const p2Prev = prevStats?.[STAT_KEYS.P2_RED_CARDS] ?? 0;
+    const p1Now  = scoreEvent.Stats[STAT_KEYS.P1_RED_CARDS] ?? 0;
+    const p2Now  = scoreEvent.Stats[STAT_KEYS.P2_RED_CARDS] ?? 0;
+    const team   = p1Now > p1Prev ? participant1 : p2Now > p2Prev ? participant2 : undefined;
+    return { ...base, eventType: 'red_card', team };
+  }
+
+  // Yellow card — FIXED: use card stat keys, not goal counts
+  if (scoreEvent.action === 'yellow_card') {
+    const p1Prev = prevStats?.[STAT_KEYS.P1_YELLOW_CARDS] ?? 0;
+    const p2Prev = prevStats?.[STAT_KEYS.P2_YELLOW_CARDS] ?? 0;
+    const p1Now  = scoreEvent.Stats[STAT_KEYS.P1_YELLOW_CARDS] ?? 0;
+    const p2Now  = scoreEvent.Stats[STAT_KEYS.P2_YELLOW_CARDS] ?? 0;
+    const team   = p1Now > p1Prev ? participant1 : p2Now > p2Prev ? participant2 : undefined;
+    return { ...base, eventType: 'yellow_card', team };
   }
 
   // VAR
@@ -283,20 +300,27 @@ export function mapTxLineEventToPunditContext(
   }
 
   // Penalties
-  if (scoreEvent.action === 'Scored' && scoreEvent.period === 12) {
-    return { ...base, eventType: 'penalty_scored' };
-  }
-  if (scoreEvent.action === 'Missed' && scoreEvent.period === 12) {
-    return { ...base, eventType: 'penalty_missed' };
+  if (scoreEvent.period === 12) {
+    if (scoreEvent.action === 'Scored') return { ...base, eventType: 'penalty_scored' };
+    if (scoreEvent.action === 'Missed') return { ...base, eventType: 'penalty_missed' };
   }
 
   // Phase transitions
+  if (scoreEvent.action === 'kick_off' && scoreEvent.statusId === 2) {
+    return { ...base, eventType: 'kick_off' };
+  }
   if (scoreEvent.action === 'halftime_finalised') {
     return { ...base, eventType: 'half_time' };
+  }
+  if (scoreEvent.statusId === 6 || scoreEvent.statusId === 7) {
+    return { ...base, eventType: 'extra_time' };
+  }
+  if (scoreEvent.statusId === 11 || scoreEvent.statusId === 12) {
+    return { ...base, eventType: 'penalties_start' };
   }
   if (scoreEvent.action === 'game_finalised' && scoreEvent.statusId === 100) {
     return { ...base, eventType: 'match_finalised' };
   }
 
-  return null; // No notable event
+  return null;
 }

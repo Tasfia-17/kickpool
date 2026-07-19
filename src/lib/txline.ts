@@ -319,8 +319,8 @@ export interface TxLineStreamCallbacks {
   onConnect?: () => void;
 }
 
-let _scoreController: AbortController | null = null;
-let _oddsController:  AbortController | null = null;
+// NOTE: No module-level singletons — each pool gets per-call controllers.
+// Old module-level vars removed; startStreams now creates fresh controllers per call.
 
 async function consumeSSE(
   url: string,
@@ -369,39 +369,40 @@ async function consumeSSE(
 
 /**
  * Start both score and odds SSE streams.
- * Returns a cleanup function.
+ * FIXED: creates per-call AbortControllers so multiple pools stream simultaneously.
+ * Returns a cleanup function specific to this call.
  */
 export async function startStreams(
   fixtureId: number,
   callbacks: TxLineStreamCallbacks
 ): Promise<() => void> {
-  stopStreams();
-  _scoreController = new AbortController();
-  _oddsController  = new AbortController();
+  // Per-call controllers — no global singleton clash between pools
+  const scoreController = new AbortController();
+  const oddsController  = new AbortController();
 
   const headers = await authHeaders();
-
   callbacks.onConnect?.();
 
   // Scores stream
   const runScoreStream = async () => {
-    while (!_scoreController!.signal.aborted) {
+    while (!scoreController.signal.aborted) {
       logger.info(`[TxLINE] Connecting scores stream for fixture ${fixtureId}`);
       await consumeSSE(
-        `${TXLINE_API}/scores/stream?fixtureId=${fixtureId}`,
+        `${TXLINE_API}/scores/stream`,
         headers,
         (data) => {
           try {
             const event = JSON.parse(data) as ScoreStreamEvent;
-            callbacks.onScore?.(event);
+            // Filter: only forward events for this fixture
+            if (!event.FixtureId || event.FixtureId === fixtureId) {
+              callbacks.onScore?.(event);
+            }
           } catch { /* ignore parse errors */ }
         },
-        (err) => {
-          logger.warn('[TxLINE] Score stream error, reconnecting in 3s:', err.message);
-        },
-        _scoreController!.signal
+        (err) => logger.warn(`[TxLINE] Score stream error (fixture ${fixtureId}), reconnecting:`, err.message),
+        scoreController.signal
       );
-      if (!_scoreController!.signal.aborted) {
+      if (!scoreController.signal.aborted) {
         await new Promise(r => setTimeout(r, 3000));
       }
     }
@@ -409,23 +410,23 @@ export async function startStreams(
 
   // Odds stream
   const runOddsStream = async () => {
-    while (!_oddsController!.signal.aborted) {
+    while (!oddsController.signal.aborted) {
       logger.info(`[TxLINE] Connecting odds stream for fixture ${fixtureId}`);
       await consumeSSE(
-        `${TXLINE_API}/odds/stream?fixtureId=${fixtureId}`,
+        `${TXLINE_API}/odds/stream`,
         headers,
         (data) => {
           try {
             const event = JSON.parse(data) as OddsStreamEvent;
-            callbacks.onOdds?.(event);
+            if (!event.FixtureId || event.FixtureId === fixtureId) {
+              callbacks.onOdds?.(event);
+            }
           } catch { /* ignore parse errors */ }
         },
-        (err) => {
-          logger.warn('[TxLINE] Odds stream error, reconnecting in 3s:', err.message);
-        },
-        _oddsController!.signal
+        (err) => logger.warn(`[TxLINE] Odds stream error (fixture ${fixtureId}), reconnecting:`, err.message),
+        oddsController.signal
       );
-      if (!_oddsController!.signal.aborted) {
+      if (!oddsController.signal.aborted) {
         await new Promise(r => setTimeout(r, 3000));
       }
     }
@@ -434,14 +435,16 @@ export async function startStreams(
   runScoreStream();
   runOddsStream();
 
-  return stopStreams;
+  // Return per-call cleanup
+  return () => {
+    scoreController.abort();
+    oddsController.abort();
+    logger.info(`[TxLINE] Streams stopped for fixture ${fixtureId}`);
+  };
 }
 
 export function stopStreams(): void {
-  _scoreController?.abort();
-  _oddsController?.abort();
-  _scoreController = null;
-  _oddsController  = null;
+  // no-op: streams are now stopped via per-call cleanup returned by startStreams()
 }
 
 // ─── Score Helpers ──────────────────────────────────────────────────────────

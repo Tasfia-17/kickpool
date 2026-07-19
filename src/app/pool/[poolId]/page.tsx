@@ -20,6 +20,7 @@ import { MatchScoreboard } from '@/components/match/MatchScoreboard';
 import { AIPunditFeed } from '@/components/match/AIPunditFeed';
 import { MatchReactions } from '@/components/match/MatchReactions';
 import { SettlementScreen } from '@/components/match/SettlementScreen';
+import { ReplayButton } from '@/components/match/ReplayButton';
 import { PoolLeaderboard } from '@/components/pool/PoolLeaderboard';
 import { WalletConnect } from '@/components/pool/WalletConnect';
 import { motion, AnimatePresence } from 'motion/react';
@@ -273,6 +274,15 @@ export default function PoolRoomPage({ params: _params }: PoolRoomPageProps) {
               />
             )}
           </AnimatePresence>
+
+          {/* Replay button — shown when match not live and not settled */}
+          {!isSettled && pool.status !== 'LIVE' && (
+            <ReplayButton
+              poolId={pool.id}
+              fixtureId={pool.fixtureId}
+              matchLabel={`${pool.participant1} vs ${pool.participant2}`}
+            />
+          )}
 
           {/* Wallet status (desktop) */}
           {session?.user && (

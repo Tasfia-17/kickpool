@@ -53,6 +53,7 @@ interface PoolMatchState {
   period:       number;
   lastSeq:      number;
   latestOdds:   TxLineOddsEvent | null;
+  prevStats:    Record<number, number>;
   stopStream:   (() => void) | null;
   finalised:    boolean;
 }
@@ -151,6 +152,7 @@ export async function bootstrapPoolMatchStream(io: Server, poolId: string): Prom
     period:       1,
     lastSeq:      0,
     latestOdds:   null,
+    prevStats:    {},
     stopStream:   null,
     finalised:    pool.status === 'SETTLED',
   };
@@ -167,6 +169,7 @@ export async function bootstrapPoolMatchStream(io: Server, poolId: string): Prom
       state.statusId = latest.statusId;
       state.period   = latest.period;
       state.lastSeq  = latest.seq;
+      state.prevStats = { ...latest.Stats };
     }
 
     const odds = await getOddsSnapshot(pool.fixtureId);
@@ -191,13 +194,17 @@ export async function bootstrapPoolMatchStream(io: Server, poolId: string): Prom
 
     onScore: async (event) => {
       const prevScore = { p1: state.score1, p2: state.score2 };
+      const prevStats = { ...state.prevStats };
       const goals = extractGoals(event.Stats);
 
       // Update state
       const prevStatusId = state.statusId;
-      state.score1   = goals.p1;
-      state.score2   = goals.p2;
-      state.statusId = event.statusId;
+      state.score1    = goals.p1;
+      state.score2    = goals.p2;
+      state.statusId  = event.statusId;
+      state.period    = event.period;
+      state.lastSeq   = event.seq;
+      state.prevStats = { ...event.Stats };
       state.period   = event.period;
       state.lastSeq  = event.seq;
 
@@ -219,7 +226,8 @@ export async function bootstrapPoolMatchStream(io: Server, poolId: string): Prom
         state.latestOdds,
         state.participant1,
         state.participant2,
-        prevScore
+        prevScore,
+        prevStats
       );
 
       if (punditCtx) {

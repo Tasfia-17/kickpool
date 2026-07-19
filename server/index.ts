@@ -42,6 +42,7 @@ import { registerVideoHandlers } from './handlers/videoHandler';
 import { registerGameHandlers } from './handlers/gameHandler';
 import { registerPresenceHandlers } from './handlers/presenceHandler';
 import { registerMatchHandlers, bootstrapAllActivePools } from './handlers/matchHandler';
+import { replayHandler } from './handlers/replayHandler';
 
 // ── Centralized State ───────────────────────────────────────────
 import {
@@ -217,6 +218,9 @@ app.post('/api/online/batch', express.json(), (req: Request, res: Response) => {
   for (const uid of userIds) result[uid] = userSockets.has(uid);
   return res.json(result);
 });
+
+// ── Match Replay (demo / judge review) ───────────────────────────────────
+app.post('/api/admin/replay', express.json(), replayHandler(io));
 
 // ── Admin: Global Broadcast ─────────────────────────────────────
 app.post('/api/admin/broadcast', express.json(), (req: Request, res: Response) => {
