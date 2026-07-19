@@ -6,7 +6,7 @@ Create a pool with friends for any World Cup match, predict the score, watch liv
 
 Built for the TxLINE World Cup Hackathon 2026.
 
-![KickPool](public/og-image.png)
+
 
 ---
 
