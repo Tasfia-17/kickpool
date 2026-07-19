@@ -1,0 +1,28 @@
+[build]
+  command = "npx prisma generate && npx prisma migrate deploy && npm run build"
+  # Don't set publish directory - @netlify/plugin-nextjs handles it automatically
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js configuration
+# The @netlify/plugin-nextjs plugin automatically handles:
+# - Next.js routing
+# - Serverless functions
+# - Static assets
+# - API routes
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Environment variables (set these in Netlify UI)
+# Required:
+# - DATABASE_URL
+# - NEXTAUTH_URL (your Netlify site URL)
+# - NEXTAUTH_SECRET
+# - NEXT_PUBLIC_SOCKET_URL (your Socket.io server URL)
+# - RESEND_API_KEY (for email sending - get from https://resend.com)
+# - PUBLIC_TUNNEL=1 (if using tunnels)
+
+# Note: No manual redirects needed - the Next.js plugin handles all routing
+

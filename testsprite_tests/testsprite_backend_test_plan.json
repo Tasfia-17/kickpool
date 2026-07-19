@@ -1,0 +1,47 @@
+[
+  {
+    "id": "TC001",
+    "title": "test_user_login_with_valid_and_invalid_credentials",
+    "description": "Verify that users can successfully log in with valid email or username and password, and receive an appropriate error message when credentials are invalid."
+  },
+  {
+    "id": "TC002",
+    "title": "test_user_registration_with_valid_and_invalid_email",
+    "description": "Verify that new users can register with valid username, email, and password, and that invalid email formats trigger inline validation errors."
+  },
+  {
+    "id": "TC003",
+    "title": "test_room_discovery_and_joining_public_rooms",
+    "description": "Verify that users can browse, filter, and sort public watch rooms on the homepage, join a selected room, and see synchronized video playback and chat interface."
+  },
+  {
+    "id": "TC004",
+    "title": "test_watch_room_synchronized_playback_and_chat_functionality",
+    "description": "Verify that users joining a watch room experience synchronized video playback controlled by the host, can send chat messages, see typing indicators, and view recent chat history."
+  },
+  {
+    "id": "TC005",
+    "title": "test_video_queue_suggestion_and_voting",
+    "description": "Verify that users can add videos to the room queue by URL or search, see the queued items, upvote queue items, and observe vote counts and queue reordering."
+  },
+  {
+    "id": "TC006",
+    "title": "test_chat_and_emoji_reactions_in_watch_room",
+    "description": "Verify that users can send real-time chat messages, react to messages with emojis, and see reaction counts update along with floating video reactions."
+  },
+  {
+    "id": "TC007",
+    "title": "test_video_search_and_addition_via_tmdb_and_youtube",
+    "description": "Verify that users can search for movies and TV shows via TMDB, view results with details, select items to preview or add to queue, and add videos by pasting YouTube URLs."
+  },
+  {
+    "id": "TC008",
+    "title": "test_watchlist_and_watch_history_management",
+    "description": "Verify that users can save TMDB results to their personal watchlist, view saved items with options to remove, and see auto-logged watch history entries with links to rejoin rooms."
+  },
+  {
+    "id": "TC009",
+    "title": "test_progress_tracking_daily_quests_and_leaderboards",
+    "description": "Verify that users can view XP, daily quests, and progress updates on the homepage, complete quests to earn rewards, and view leaderboards with user stats and profiles."
+  }
+]

@@ -1,0 +1,9 @@
+[Unit]
+Description=CinePurr auto deploy service
+Wants=network-online.target docker.service
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/root/CinePurr
+ExecStart=/bin/bash /root/CinePurr/scripts/deploy-prod.sh

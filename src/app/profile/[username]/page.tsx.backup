@@ -1,0 +1,2114 @@
+'use client';
+
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { usePokemonTheme } from '@/components/PokemonThemeProvider';
+import { useI18n } from '@/lib/i18n';
+import { useToast } from '@/components/ui/Toast';
+import { Settings, Clock, Home, MessageCircle, User, Camera, FileText, Globe, Save, Key, ArrowLeft, Trophy, Crown, Sparkles, Type, Palette, Wand2, Zap, Image, Layers, CreditCard } from 'lucide-react';
+import { ProfileSkeleton } from '@/components/ui/Skeleton';
+import ProfileCard from '@/components/ui/ProfileCard';
+import { IDCard, ID_CARD_STYLES, IDCardStyleKey } from '@/components/ui/IDCard';
+import Logo from '@/components/Logo';
+import Link from 'next/link';
+
+interface UserProfile {
+  id: string;
+  name: string;
+  email?: string;
+  role: string;
+  watchTime: number;
+  roomsJoined: number;
+  messagesCount: number;
+  createdAt: string;
+  friendStatus?: 'none' | 'pending' | 'friends' | 'requested';
+  bio?: string;
+  discord?: string;
+  instagram?: string;
+  twitter?: string;
+  isVIP?: boolean;
+  isFounder?: boolean;
+  vipNameColor?: string;
+  vipFont?: string;
+  vipBadge?: string;
+  vipGlow?: boolean;
+  vipNameEffect?: string;
+  vipNameGradient?: string;
+  vipProfileBg?: string;
+  vipProfileBanner?: string;
+  vipProfileAccent?: string;
+  vipProfileGlow?: string;
+  // ProfileCard name settings
+  vipCardNameColor?: string;
+  vipCardNameGradient?: string;
+  vipCardNameGlow?: boolean;
+  // ID Card settings
+  profileCardStyle?: 'classic' | 'idcard';
+  idCardStyle?: IDCardStyleKey;
+  idCardCustomHeader?: string;
+  idCardCustomBody?: string;
+  idCardCustomAccent?: string;
+  idCardCustomBorder?: string;
+  idCardShowLevel?: boolean;
+  idCardShowXp?: boolean;
+  idCardShowHologram?: boolean;
+  idCardShowScanlines?: boolean;
+}
+
+// Watch time is stored in seconds in the database
+const formatWatchTime = (seconds: number): string => {
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  if (hours < 24) return `${hours}h ${mins}m`;
+  const days = Math.floor(hours / 24);
+  const remainingHours = hours % 24;
+  return `${days}d ${remainingHours}h`;
+};
+
+type TabType = 'profile' | 'settings';
+
+export default function ProfilePage() {
+  // ALL hooks must be called before any conditional returns (React Rules of Hooks)
+  const { t, language, setLanguage } = useI18n();
+  const params = useParams();
+  const router = useRouter();
+  const { data: session, update } = useSession();
+  const { currentTheme, isDarkMode, pokemonSprite } = usePokemonTheme();
+  const mascot = pokemonSprite;
+  const { addToast } = useToast();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [friendLoading, setFriendLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabType>('profile');
+  
+  // Settings State - ALL hooks must be before conditional returns
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [username, setUsername] = useState('');
+  const [image, setImage] = useState('');
+  const [bio, setBio] = useState('');
+  const [discord, setDiscord] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [twitter, setTwitter] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState('');
+  const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  
+  // VIP State
+  const [isVIP, setIsVIP] = useState(false);
+  const [vipNameColor, setVipNameColor] = useState('#ff69b4');
+  const [vipFont, setVipFont] = useState('default');
+  const [vipBadge, setVipBadge] = useState('👑');
+  const [vipGlow, setVipGlow] = useState(false);
+  const [vipNameEffect, setVipNameEffect] = useState('');
+  const [vipNameGradient, setVipNameGradient] = useState('');
+  const [vipProfileBg, setVipProfileBg] = useState('');
+  const [vipProfileBanner, setVipProfileBanner] = useState('');
+  const [vipProfileAccent, setVipProfileAccent] = useState('');
+  const [vipProfileBorder, setVipProfileBorder] = useState('');
+  const [vipProfileGlow, setVipProfileGlow] = useState('');
+  const [vipCardNameColor, setVipCardNameColor] = useState('');
+  const [vipCardNameGradient, setVipCardNameGradient] = useState('');
+  const [vipCardNameGlow, setVipCardNameGlow] = useState(false);
+  const [vipMessage, setVipMessage] = useState('');
+  const [isVipLoading, setIsVipLoading] = useState(false);
+  const [vipTab, setVipTab] = useState<'name' | 'profile' | 'idcard'>('name');
+  
+  // ID Card State
+  const [profileCardStyle, setProfileCardStyle] = useState<'classic' | 'idcard'>('classic');
+  const [idCardStyle, setIdCardStyle] = useState<IDCardStyleKey>('officer');
+  const [idCardCustomHeader, setIdCardCustomHeader] = useState('');
+  const [idCardCustomBody, setIdCardCustomBody] = useState('');
+  const [idCardCustomAccent, setIdCardCustomAccent] = useState('');
+  const [idCardCustomBorder, setIdCardCustomBorder] = useState('');
+  const [idCardShowLevel, setIdCardShowLevel] = useState(true);
+  const [idCardShowXp, setIdCardShowXp] = useState(true);
+  const [idCardShowHologram, setIdCardShowHologram] = useState(true);
+  const [idCardShowScanlines, setIdCardShowScanlines] = useState(true);
+  
+  // Prevent hydration mismatch by waiting for mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Get username param (needed for useEffect dependencies)
+  const usernameParam = params.username as string;
+  const isOwnProfile = session?.user?.name === usernameParam;
+
+  // Fetch profile data - MUST be before conditional return (React Rules of Hooks)
+  useEffect(() => {
+    if (!usernameParam) return; // Guard against undefined username
+    
+    // Clear previous profile data when username changes
+    setProfile(null);
+    setLoading(true);
+    setError(null);
+    
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`/api/users/profile/${encodeURIComponent(usernameParam)}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            setError('User not found');
+          } else {
+            setError('Failed to load profile');
+          }
+          setLoading(false);
+          return;
+        }
+        const data = await res.json();
+        
+        // Double-check we're still on the same username (prevent race conditions)
+        if (data.name === usernameParam) {
+          setProfile(data);
+        }
+        
+        // If own profile, also fetch settings data
+        if (session?.user?.name === usernameParam) {
+          const userRes = await fetch('/api/user');
+          const userData = await userRes.json();
+          if (userData) {
+            setUsername(userData.username || '');
+            setImage(userData.image || '');
+            setBio(userData.bio || '');
+            setDiscord(userData.discord || '');
+            setInstagram(userData.instagram || '');
+            setTwitter(userData.twitter || '');
+          }
+          
+          // Fetch VIP data
+          const vipRes = await fetch('/api/user/vip');
+          const vipData = await vipRes.json();
+          if (vipData) {
+            setIsVIP(vipData.isVIP || false);
+            setVipNameColor(vipData.vipNameColor || '#ff69b4');
+            setVipFont(vipData.vipFont || 'default');
+            setVipBadge(vipData.vipBadge || '👑');
+            setVipGlow(vipData.vipGlow || false);
+            setVipNameEffect(vipData.vipNameEffect || '');
+            setVipNameGradient(vipData.vipNameGradient || '');
+            setVipProfileBg(vipData.vipProfileBg || '');
+            setVipProfileBanner(vipData.vipProfileBanner || '');
+            setVipProfileAccent(vipData.vipProfileAccent || '');
+            setVipProfileBorder(vipData.vipProfileBorder || '');
+            setVipProfileGlow(vipData.vipProfileGlow || '');
+            setVipCardNameColor(vipData.vipCardNameColor || '');
+            setVipCardNameGradient(vipData.vipCardNameGradient || '');
+            setVipCardNameGlow(vipData.vipCardNameGlow || false);
+            // ID Card settings
+            setProfileCardStyle(vipData.profileCardStyle || 'classic');
+            setIdCardStyle(vipData.idCardStyle || 'officer');
+            setIdCardCustomHeader(vipData.idCardCustomHeader || '');
+            setIdCardCustomBody(vipData.idCardCustomBody || '');
+            setIdCardCustomAccent(vipData.idCardCustomAccent || '');
+            setIdCardCustomBorder(vipData.idCardCustomBorder || '');
+            setIdCardShowLevel(vipData.idCardShowLevel !== false);
+            setIdCardShowXp(vipData.idCardShowXp !== false);
+            setIdCardShowHologram(vipData.idCardShowHologram !== false);
+            setIdCardShowScanlines(vipData.idCardShowScanlines !== false);
+          }
+        }
+      } catch (err) {
+        setError('Failed to load profile');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [usernameParam, session?.user?.name]);
+
+  const handleFriendAction = async () => {
+    if (!profile || !session) return;
+    
+    setFriendLoading(true);
+    try {
+      if (profile.friendStatus === 'none') {
+        await fetch('/api/friends/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ receiverId: profile.id })
+        });
+        setProfile({ ...profile, friendStatus: 'pending' });
+      } else if (profile.friendStatus === 'requested') {
+        await fetch('/api/friends/accept', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senderId: profile.id })
+        });
+        setProfile({ ...profile, friendStatus: 'friends' });
+      } else if (profile.friendStatus === 'friends') {
+        await fetch('/api/friends/remove', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ friendId: profile.id })
+        });
+        setProfile({ ...profile, friendStatus: 'none' });
+      } else if (profile.friendStatus === 'pending') {
+        await fetch('/api/friends/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ receiverId: profile.id })
+        });
+        setProfile({ ...profile, friendStatus: 'none' });
+      }
+    } catch (err) {
+      console.error('Friend action failed:', err);
+    } finally {
+      setFriendLoading(false);
+    }
+  };
+
+  const getFriendButtonText = () => {
+    switch (profile?.friendStatus) {
+      case 'none': return 'Add Friend';
+      case 'pending': return 'Request Sent';
+      case 'requested': return 'Accept Request';
+      case 'friends': return 'Remove Friend';
+      default: return 'Add Friend';
+    }
+  };
+
+  // Settings handlers
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 500000) {
+        addToast({ type: 'error', title: 'File Too Large', message: 'Please use an image under 500KB.' });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
+
+    // Basic validation
+    if (!username || username.trim().length === 0) {
+      setMessage('Username is required');
+      setIsLoading(false);
+      return;
+    }
+
+    if (username.length < 3 || username.length > 20) {
+      setMessage('Username must be between 3 and 20 characters');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          username: username.trim(), 
+          image: image || null, 
+          bio: bio || null, 
+          discord: discord || null, 
+          instagram: instagram || null, 
+          twitter: twitter || null 
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to update profile');
+      }
+
+      const updatedUser = await res.json();
+      
+      // Update session with new name and image
+      await update({ 
+        name: updatedUser.username || username, 
+        image: `/api/avatar/${updatedUser.username || username}?t=${Date.now()}`
+      });
+      
+      setMessage('Profile updated successfully!');
+      
+      // Refresh profile data
+      if (updatedUser.username !== usernameParam) {
+        // Username changed, redirect to new profile
+        router.push(`/profile/${updatedUser.username}`);
+      } else {
+        // Same username, just refresh
+        router.refresh();
+      }
+    } catch (error: any) {
+      setMessage(error.message || 'Something went wrong. Please try again.');
+      console.error('Profile update error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMessage('');
+    
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage('Passwords do not match!');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordMessage('Password must be at least 6 characters!');
+      return;
+    }
+
+    setIsPasswordLoading(true);
+
+    try {
+      const res = await fetch('/api/user/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update password');
+      }
+
+      setPasswordMessage('Password updated successfully!');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      setPasswordMessage(err.message);
+    } finally {
+      setIsPasswordLoading(false);
+    }
+  };
+
+  // Show nothing until mounted to prevent hydration flash
+  if (!mounted || loading) {
+    return (
+      <div 
+        className="min-h-screen overflow-x-hidden"
+        style={{ 
+          background: isDarkMode 
+            ? 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0d0d1a 50%, #1a0a1a 75%, #0a0a0a 100%)'
+            : 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)'
+        }}
+      >
+        {/* Header */}
+        <header 
+          className={`h-16 border-b-4 flex items-center justify-between px-4 sm:px-6 shrink-0 ${isDarkMode ? 'border-pink-500/50 bg-black/90' : 'border-black bg-white/95'}`}
+          style={{ backgroundColor: isDarkMode ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.95)' }}
+        >
+          <Logo size="xl" />
+        </header>
+        
+        <div className="max-w-4xl mx-auto px-3 py-4 sm:px-4 sm:py-6 md:px-6" style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
+          {/* Loading Animation */}
+          <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+            <div className="relative">
+              {/* Spinning Circle */}
+              <div className="w-16 h-16 border-4 border-pink-500/30 border-t-pink-500 rounded-full animate-spin"></div>
+              {/* Inner Pulse */}
+              <div className="absolute inset-0 w-16 h-16 border-4 border-pink-500/20 rounded-full animate-ping"></div>
+            </div>
+            <div className="text-center">
+              <p className={`text-lg font-bold mb-2 ${isDarkMode ? 'text-pink-400' : 'text-pink-600'}`}>
+                Loading Profile...
+              </p>
+              <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Please wait
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div 
+        className="min-h-screen overflow-x-hidden flex flex-col"
+        style={{ 
+          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0d0d1a 50%, #1a0a1a 75%, #0a0a0a 100%)'
+        }}
+      >
+        {/* Header */}
+        <header className="h-16 border-b-4 border-pink-500/50 bg-black/90 flex items-center justify-between px-4 sm:px-6 shrink-0" style={{ backgroundColor: 'rgba(0,0,0,0.9)' }}>
+          <Logo size="xl" />
+        </header>
+        
+        <div className="flex-1 flex items-center justify-center p-3 sm:p-4">
+          <div 
+            className="text-center p-6 sm:p-8 border-4 rounded-lg border-pink-500/50 shadow-[4px_4px_0px_0px_rgba(236,72,153,0.3)] bg-black/80 max-w-md mx-auto"
+          >
+            <div className="text-6xl mb-4">😿</div>
+            <h1 className="text-2xl font-bold mb-2 text-pink-400">
+              {error || 'User not found'}
+            </h1>
+            <p className="mb-4 text-gray-400">
+              This profile doesn't exist or has been removed.
+            </p>
+            <Link 
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 font-bold hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all rounded border-pink-500 bg-pink-500/20 text-pink-400 hover:shadow-[4px_4px_0px_0px_rgba(236,72,153,0.5)]"
+            >
+              <Home size={18} /> Go Home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      className="min-h-screen overflow-x-hidden"
+      style={{ 
+        background: isDarkMode 
+          ? 'linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 25%, #0d0d1a 50%, #1a0a1a 75%, #0a0a0a 100%)'
+          : 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)'
+      }}
+    >
+      {/* Header with Logo */}
+      <header 
+        className={`h-16 sticky top-0 z-50 border-b-4 flex items-center justify-between px-4 sm:px-6 shrink-0 ${isDarkMode ? 'border-pink-500/50 bg-black/90' : 'border-black bg-white/95'} backdrop-blur-sm`}
+        style={{ backgroundColor: isDarkMode ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.95)' }}
+      >
+        <Logo size="xl" />
+        
+        {/* Back to Home */}
+        <Link
+          href="/"
+          className={`flex items-center gap-2 px-3 py-2 border-2 font-bold text-sm transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] ${
+            isDarkMode 
+              ? 'border-pink-500 bg-pink-500/20 text-pink-400 hover:shadow-[4px_4px_0px_0px_rgba(236,72,153,0.5)]' 
+              : 'border-black bg-pink-100 text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+          }`}
+        >
+          <Home size={16} /> Home
+        </Link>
+      </header>
+
+      <div className="max-w-4xl mx-auto px-3 py-4 sm:px-4 sm:py-6 md:px-6">
+
+        {/* Profile Card */}
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 mb-4 sm:mb-6">
+          {/* ProfileCard on the left */}
+          <div className="flex justify-center lg:justify-start flex-shrink-0">
+            {/* Show ID Card or Classic Profile Card based on user preference */}
+            {(profile.profileCardStyle === 'idcard' || profileCardStyle === 'idcard') ? (
+              <IDCard
+                username={profile.name}
+                title={profile.isFounder ? 'Founder' : (profile.role === 'PURR_ADMIN' ? 'PuRRRRRFect Admin' : (profile.isVIP ? 'VIP' : (profile.role === 'admin' ? 'Admin' : 'Member')))}
+                level={Math.floor(profile.watchTime / 3600) + 1}
+                xp={profile.watchTime % 3600}
+                maxXp={3600}
+                avatarUrl={`/api/avatar/${profile.name}`}
+                cardStyle={profile.idCardStyle as IDCardStyleKey || idCardStyle}
+                customHeaderBg={profile.idCardCustomHeader || idCardCustomHeader || undefined}
+                customBodyBg={profile.idCardCustomBody || idCardCustomBody || undefined}
+                customAccent={profile.idCardCustomAccent || idCardCustomAccent || undefined}
+                customBorder={profile.idCardCustomBorder || idCardCustomBorder || undefined}
+                showLevel={profile.idCardShowLevel !== false && idCardShowLevel}
+                showXpBar={profile.idCardShowXp !== false && idCardShowXp}
+                showHologram={profile.idCardShowHologram !== false && idCardShowHologram}
+                showScanlines={profile.idCardShowScanlines !== false && idCardShowScanlines}
+                size="lg"
+              />
+            ) : (
+              <>
+              {console.log('ProfileCard props:', { 
+                vipCardNameColor: profile.vipCardNameColor, 
+                vipCardNameGradient: profile.vipCardNameGradient,
+                vipNameColor: profile.vipNameColor,
+                vipNameGradient: profile.vipNameGradient
+              })}
+              <ProfileCard
+                name={profile.isVIP && profile.vipBadge ? `${profile.vipBadge} ${profile.name}` : profile.name}
+                title={profile.isFounder ? 'Founder' : (profile.role === 'PURR_ADMIN' ? 'PuRRRRRFect Admin' : (profile.isVIP ? 'VIP Member' : (profile.role === 'admin' ? 'Admin' : 'Member')))}
+                handle={profile.name}
+                status={profile.friendStatus === 'friends' ? 'Friend' : 'Online'}
+                avatarUrl={`/api/avatar/${profile.name}`}
+                showUserInfo={true}
+                enableTilt={true}
+                enableMobileTilt={false}
+                contactText={!isOwnProfile && session ? getFriendButtonText() : 'View Stats'}
+                onContactClick={!isOwnProfile && session ? handleFriendAction : undefined}
+                behindGlowEnabled={!!(profile.vipProfileGlow)}
+                behindGlowColor={profile.vipProfileGlow || undefined}
+                innerGradient={
+                  profile.vipProfileBg 
+                    ? (profile.vipProfileBg.includes(',')
+                      ? `linear-gradient(145deg, ${profile.vipProfileBg.split(',')[0]}cc 0%, ${profile.vipProfileBg.split(',')[1]}88 100%)`
+                      : `linear-gradient(145deg, ${profile.vipProfileBg}cc 0%, ${profile.vipProfileBg}44 100%)`)
+                    : undefined
+                }
+                nameColor={profile.vipCardNameGradient ? undefined : (profile.vipCardNameColor || (profile.vipNameGradient ? undefined : profile.vipNameColor))}
+                nameGradient={profile.vipCardNameGradient || profile.vipNameGradient || undefined}
+                nameFont={profile.vipFont || undefined}
+                nameGlow={profile.vipCardNameGlow || profile.vipGlow}
+                className="max-w-[300px]"
+              />
+              </>
+            )}
+          </div>
+
+          {/* Info Panel on the right */}
+          <div className="flex-1">
+            <div 
+              className={`border-4 p-4 sm:p-6 h-full rounded-lg ${isDarkMode ? 'border-pink-500/50 shadow-[4px_4px_0px_0px_rgba(236,72,153,0.3)]' : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'}`}
+              style={{ backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : 'white' }}
+            >
+              <div className="flex items-center gap-2 mb-3 sm:mb-4 flex-wrap">
+                <h1 
+                  className={`text-xl sm:text-2xl md:text-3xl font-black ${(profile.isFounder || profile.isVIP || profile.role === 'PURR_ADMIN') && profile.vipGlow ? 'vip-name-glow' : ''}`}
+                  style={{ 
+                    ...((profile.isFounder || profile.isVIP || profile.role === 'PURR_ADMIN') && profile.vipNameGradient ? {
+                      backgroundImage: `linear-gradient(90deg, ${profile.vipNameGradient})`,
+                      backgroundSize: '200% auto',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      animation: 'gradient-shift 3s linear infinite',
+                    } : (profile.isFounder || profile.isVIP || profile.role === 'PURR_ADMIN') && profile.vipNameColor ? {
+                      color: profile.vipNameColor,
+                      textShadow: profile.vipGlow ? `0 0 10px ${profile.vipNameColor}` : 'none'
+                    } : profile.isFounder ? {
+                      // Default founder gradient if no custom settings
+                      backgroundImage: 'linear-gradient(90deg, #a855f7, #ec4899, #f59e0b, #a855f7)',
+                      backgroundSize: '200% auto',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      animation: 'gradient-shift 3s linear infinite',
+                    } : {
+                      color: isDarkMode ? 'white' : 'black',
+                    }),
+                    fontFamily: (profile.isVIP || profile.isFounder || profile.role === 'PURR_ADMIN') && profile.vipFont ? 
+                      (profile.vipFont === 'mono' ? 'monospace' : 
+                       profile.vipFont === 'serif' ? 'serif' : 
+                       profile.vipFont === 'cursive' ? 'cursive' : 
+                       profile.vipFont === 'fantasy' ? 'fantasy' :
+                       profile.vipFont === 'comic' ? '"Comic Sans MS", cursive' : 'inherit') : 'inherit'
+                  }}
+                >
+                  {(profile.isVIP || profile.isFounder || profile.role === 'PURR_ADMIN') && profile.vipBadge ? <span className="mr-2">{profile.vipBadge}</span> : null}
+                  {profile.name}
+                </h1>
+                {profile.isFounder && (
+                  <span 
+                    className="px-2 py-1 text-xs font-bold border-2 border-purple-500 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500 text-white"
+                  >
+                    FOUNDER
+                  </span>
+                )}
+                {(profile.isVIP || profile.role === 'PURR_ADMIN') && !profile.isFounder && (
+                  <span 
+                    className="px-2 py-1 text-xs font-bold border-2 border-yellow-500 bg-gradient-to-r from-yellow-400 to-orange-400 text-black"
+                  >
+                    VIP
+                  </span>
+                )}
+                {profile.role === 'PURR_ADMIN' && (
+                  <span 
+                    className="px-2 py-1 text-xs font-bold border-2 border-white purr-admin-rainbow"
+                    style={{ 
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    PuRRRRRFect Admin
+                  </span>
+                )}
+                {(profile.role === 'admin' || profile.role === 'ADMIN') && !profile.isFounder && (
+                  <span 
+                    className="px-2 py-1 text-xs font-bold border-2 border-black"
+                    style={{ backgroundColor: '#FFD700', color: 'black' }}
+                  >
+                    ADMIN
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-500 mb-4">
+                Member since {new Date(profile.createdAt).toLocaleDateString()}
+              </p>
+              
+              {/* Quick Stats */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <div className={`text-center p-2 sm:p-3 border-2 rounded-lg transition-all hover:scale-105 ${isDarkMode ? 'border-pink-500/50 bg-pink-500/10' : 'border-black bg-pink-50'}`}>
+                  <p className="text-xl sm:text-2xl font-black text-pink-500">{formatWatchTime(profile.watchTime)}</p>
+                  <p className={`text-xs font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <Clock size={12} className="inline mr-1" />Watch Time
+                  </p>
+                </div>
+                <div className={`text-center p-2 sm:p-3 border-2 rounded-lg transition-all hover:scale-105 ${isDarkMode ? 'border-purple-500/50 bg-purple-500/10' : 'border-black bg-purple-50'}`}>
+                  <p className="text-xl sm:text-2xl font-black text-purple-500">{profile.roomsJoined}</p>
+                  <p className={`text-xs font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <Home size={12} className="inline mr-1" />Rooms
+                  </p>
+                </div>
+                <div className={`text-center p-2 sm:p-3 border-2 rounded-lg transition-all hover:scale-105 ${isDarkMode ? 'border-cyan-500/50 bg-cyan-500/10' : 'border-black bg-cyan-50'}`}>
+                  <p className="text-xl sm:text-2xl font-black text-cyan-500">{profile.messagesCount}</p>
+                  <p className={`text-xs font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <MessageCircle size={12} className="inline mr-1" />Messages
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 flex-wrap">
+                {!isOwnProfile && session && (
+                  <button
+                    onClick={handleFriendAction}
+                    disabled={friendLoading}
+                    className={`px-4 py-2 border-2 font-bold hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all disabled:opacity-50 rounded ${
+                      profile.friendStatus === 'friends' 
+                        ? 'border-red-500 bg-red-500/20 text-red-400 hover:shadow-[4px_4px_0px_0px_rgba(239,68,68,0.5)]'
+                        : isDarkMode 
+                          ? 'border-pink-500 bg-pink-500/20 text-pink-400 hover:shadow-[4px_4px_0px_0px_rgba(236,72,153,0.5)]' 
+                          : 'border-black bg-pink-500 text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                    }`}
+                  >
+                    {friendLoading ? '...' : getFriendButtonText()}
+                  </button>
+                )}
+                <Link
+                  href="/achievements"
+                  className={`px-4 py-2 border-2 font-bold hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all flex items-center gap-2 rounded ${isDarkMode ? 'border-yellow-500 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 hover:shadow-[4px_4px_0px_0px_rgba(234,179,8,0.5)]' : 'border-black bg-gradient-to-r from-yellow-400 to-orange-400 text-black hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'}`}
+                >
+                  <Trophy size={18} /> Achievements
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs - Only show for own profile */}
+        {isOwnProfile && (
+          <div className={`flex border-4 border-b-0 rounded-t-lg overflow-hidden ${isDarkMode ? 'border-pink-500/50 bg-black/50' : 'border-black bg-gray-100'}`}>
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`flex-1 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2 transition-all ${
+                activeTab === 'profile' 
+                  ? `${isDarkMode ? 'bg-pink-500/20 text-pink-400 border-b-4 border-pink-500' : 'bg-white text-black border-b-4 border-pink-500'} -mb-1` 
+                  : `text-gray-500 ${isDarkMode ? 'hover:text-pink-400 hover:bg-pink-500/10' : 'hover:text-black hover:bg-pink-50'}`
+              }`}
+            >
+              <User size={18} /> Profile
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`flex-1 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2 transition-all ${
+                activeTab === 'settings' 
+                  ? `${isDarkMode ? 'bg-pink-500/20 text-pink-400 border-b-4 border-pink-500' : 'bg-white text-black border-b-4 border-pink-500'} -mb-1` 
+                  : `text-gray-500 ${isDarkMode ? 'hover:text-pink-400 hover:bg-pink-500/10' : 'hover:text-black hover:bg-pink-50'}`
+              }`}
+            >
+              <Settings size={18} /> Settings
+            </button>
+          </div>
+        )}
+
+        {/* Tab Content */}
+        <div 
+          className={`border-4 p-4 sm:p-6 rounded-b-lg ${isOwnProfile ? '' : 'rounded-t-lg'} ${isDarkMode ? 'border-pink-500/50 shadow-[4px_4px_0px_0px_rgba(236,72,153,0.3)]' : 'border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'}`}
+          style={{ backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : 'white' }}
+        >
+          {activeTab === 'profile' ? (
+            <>
+              {/* Bio Section */}
+              {(profile.bio || isOwnProfile) && (
+                <div className="mb-6">
+                  <h3 className={`font-bold text-lg mb-2 flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <FileText size={20} /> About
+                  </h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                    {profile.bio || (isOwnProfile ? 'No bio yet. Go to Settings tab to add one!' : 'No bio yet.')}
+                  </p>
+                </div>
+              )}
+
+              {/* Social Links */}
+              {(profile.discord || profile.instagram || profile.twitter) && (
+                <div>
+                  <h3 className={`font-bold text-lg mb-2 flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                    <Globe size={20} /> Social Links
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {profile.discord && (
+                      <span className="px-3 py-1 bg-[#5865F2] text-white font-bold border-2 border-black">
+                        Discord: {profile.discord}
+                      </span>
+                    )}
+                    {profile.instagram && (
+                      <span className="px-3 py-1 bg-[#E1306C] text-white font-bold border-2 border-black">
+                        IG: {profile.instagram}
+                      </span>
+                    )}
+                    {profile.twitter && (
+                      <span className="px-3 py-1 bg-[#1DA1F2] text-white font-bold border-2 border-black">
+                        X: {profile.twitter}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            /* Settings Tab - Redesigned */
+            <div className="space-y-8">
+              {/* Profile Section Card */}
+              <div className={`rounded-xl p-6 ${isDarkMode ? 'bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-white/10' : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-lg'}`}>
+                <h2 className={`text-lg font-bold mb-6 flex items-center gap-2 pb-3 border-b ${isDarkMode ? 'text-white border-white/10' : 'text-gray-800 border-gray-200'}`}>
+                  <User size={20} className="text-pink-500" /> Profile Information
+                </h2>
+                
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Avatar Upload - Centered */}
+                  <div className="flex flex-col items-center mb-8">
+                    <div 
+                      className="relative group cursor-pointer mb-3" 
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      {image ? (
+                        <img src={image} alt="Avatar" className={`w-28 h-28 rounded-full object-cover border-4 transition-all ${isDarkMode ? 'border-pink-500/50 hover:border-pink-400' : 'border-pink-300 hover:border-pink-500'} shadow-lg`} />
+                      ) : (
+                        <div 
+                          className={`w-28 h-28 rounded-full border-4 flex items-center justify-center text-3xl font-bold text-white transition-all ${isDarkMode ? 'border-pink-500/50 hover:border-pink-400' : 'border-pink-300 hover:border-pink-500'} shadow-lg`}
+                          style={{ backgroundColor: currentTheme.colors.primary }}
+                        >
+                          {username?.[0]?.toUpperCase()}
+                        </div>
+                      )}
+                      <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white font-bold text-xs gap-1">
+                        <Camera size={16} /> Change
+                      </div>
+                      <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
+                    </div>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>Click to upload (max 500KB)</p>
+                  </div>
+
+                  {/* Form Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Username */}
+                    <div>
+                      <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{t('username')}</label>
+                      <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className={`w-full p-3 rounded-lg border-2 transition-all focus:ring-2 focus:ring-pink-500/50 ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white focus:border-pink-500' : 'bg-white border-gray-300 text-gray-900 focus:border-pink-500'}`}
+                      />
+                    </div>
+
+                    {/* Bio */}
+                    <div className="md:col-span-2">
+                      <label className={`block text-sm font-semibold mb-2 flex items-center gap-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        <FileText size={14} /> {t('aboutMe')}
+                      </label>
+                      <textarea
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        className={`w-full p-3 rounded-lg border-2 h-24 resize-none transition-all focus:ring-2 focus:ring-pink-500/50 ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white focus:border-pink-500' : 'bg-white border-gray-300 text-gray-900 focus:border-pink-500'}`}
+                        placeholder={t('tellUs')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-800/50' : 'bg-gray-50'}`}>
+                    <h3 className={`font-semibold mb-4 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                      <Globe size={16} /> {t('socialLinks')}
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5 text-[#5865F2]">{t('discord')}</label>
+                        <input
+                          type="text"
+                          value={discord}
+                          onChange={(e) => setDiscord(e.target.value)}
+                          className={`w-full p-2.5 rounded-lg border-2 text-sm transition-all focus:ring-2 focus:ring-[#5865F2]/50 ${isDarkMode ? 'bg-gray-900 border-gray-700 text-white focus:border-[#5865F2]' : 'bg-white border-gray-300 text-gray-900 focus:border-[#5865F2]'}`}
+                          placeholder="username#0000"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5 text-[#E1306C]">{t('instagram')}</label>
+                        <input
+                          type="text"
+                          value={instagram}
+                          onChange={(e) => setInstagram(e.target.value)}
+                          className={`w-full p-2.5 rounded-lg border-2 text-sm transition-all focus:ring-2 focus:ring-[#E1306C]/50 ${isDarkMode ? 'bg-gray-900 border-gray-700 text-white focus:border-[#E1306C]' : 'bg-white border-gray-300 text-gray-900 focus:border-[#E1306C]'}`}
+                          placeholder="@username"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5 text-[#1DA1F2]">{t('twitter')}</label>
+                        <input
+                          type="text"
+                          value={twitter}
+                          onChange={(e) => setTwitter(e.target.value)}
+                          className={`w-full p-2.5 rounded-lg border-2 text-sm transition-all focus:ring-2 focus:ring-[#1DA1F2]/50 ${isDarkMode ? 'bg-gray-900 border-gray-700 text-white focus:border-[#1DA1F2]' : 'bg-white border-gray-300 text-gray-900 focus:border-[#1DA1F2]'}`}
+                          placeholder="@username"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Save Button & Message */}
+                  {message && (
+                    <div className={`p-3 rounded-lg text-center text-sm font-medium ${message.includes('success') ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                      {message}
+                    </div>
+                  )}
+                  
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3 font-bold text-white rounded-lg transition-all flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg hover:shadow-pink-500/25 disabled:opacity-50"
+                  >
+                    {isLoading ? t('saving') : <><Save size={18} /> {t('save')}</>}
+                  </button>
+                </form>
+              </div>
+
+              {/* Security Section Card */}
+              <div className={`rounded-xl p-6 ${isDarkMode ? 'bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-white/10' : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-lg'}`}>
+                <h2 className={`text-lg font-bold mb-6 flex items-center gap-2 pb-3 border-b ${isDarkMode ? 'text-white border-white/10' : 'text-gray-800 border-gray-200'}`}>
+                  <Key size={20} className="text-gray-500" /> Change Password
+                </h2>
+                
+                <form onSubmit={handlePasswordChange} className="space-y-4">
+                  <div>
+                    <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Current Password</label>
+                    <input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all focus:ring-2 focus:ring-gray-500/50 ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white focus:border-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:border-gray-500'}`}
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>New Password</label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className={`w-full p-3 rounded-lg border-2 transition-all focus:ring-2 focus:ring-gray-500/50 ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white focus:border-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:border-gray-500'}`}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Confirm Password</label>
+                      <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className={`w-full p-3 rounded-lg border-2 transition-all focus:ring-2 focus:ring-gray-500/50 ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white focus:border-gray-500' : 'bg-white border-gray-300 text-gray-900 focus:border-gray-500'}`}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                  </div>
+
+                  {passwordMessage && (
+                    <div className={`p-3 rounded-lg text-center text-sm font-medium ${passwordMessage.includes('success') ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                      {passwordMessage}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isPasswordLoading}
+                    className={`w-full py-3 font-bold rounded-lg transition-all flex items-center justify-center gap-2 ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-800 hover:bg-gray-900 text-white'} disabled:opacity-50`}
+                  >
+                    {isPasswordLoading ? 'Updating...' : <><Key size={18} /> Update Password</>}
+                  </button>
+                </form>
+              </div>
+
+              {/* Language Section */}
+              <div className={`rounded-xl p-6 ${isDarkMode ? 'bg-gradient-to-br from-gray-900/80 to-gray-800/50 border border-white/10' : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-lg'}`}>
+                <h2 className={`text-lg font-bold mb-4 flex items-center gap-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
+                  <Globe size={20} className="text-blue-500" /> {t('language')}
+                </h2>
+                <div className="flex gap-4 items-center">
+                  <label className={`font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t('selectLanguage')}</label>
+                  <select 
+                    value={language} 
+                    onChange={e => setLanguage(e.target.value as 'en' | 'tr')} 
+                    className={`p-2.5 rounded-lg border-2 transition-all ${isDarkMode ? 'bg-gray-800 border-gray-700 text-white' : 'bg-white border-gray-300 text-gray-900'}`}
+                  >
+                    <option value="en">{t('english')}</option>
+                    <option value="tr">{t('turkish')}</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* VIP Settings Section */}
+              {isVIP && (
+                <div className={`rounded-xl overflow-hidden ${isDarkMode ? 'bg-gradient-to-br from-amber-900/30 to-orange-900/20 border border-amber-500/30' : 'bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 shadow-lg'}`}>
+                  <div className={`p-4 ${isDarkMode ? 'bg-gradient-to-r from-amber-500/20 to-orange-500/20' : 'bg-gradient-to-r from-amber-100 to-orange-100'}`}>
+                    <h2 className="font-bold text-lg flex items-center gap-2 text-amber-600">
+                      <Crown size={22} className="text-amber-500" /> VIP Customization
+                      <Sparkles size={14} className="text-amber-400 animate-pulse" />
+                    </h2>
+                  </div>
+                  
+                  {/* VIP Sub-tabs - Cleaner Design */}
+                  <div className="p-4">
+                    <div className={`flex rounded-lg overflow-hidden mb-6 ${isDarkMode ? 'bg-gray-800/50' : 'bg-white'} shadow-inner`}>
+                      <button
+                        type="button"
+                        onClick={() => setVipTab('name')}
+                        className={`flex-1 px-4 py-3 font-medium text-sm flex items-center justify-center gap-2 transition-all ${
+                          vipTab === 'name' 
+                            ? `${isDarkMode ? 'bg-amber-500/30 text-amber-400' : 'bg-amber-500 text-white'} shadow-sm` 
+                            : `${isDarkMode ? 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10' : 'text-gray-600 hover:text-amber-600 hover:bg-amber-50'}`
+                        }`}
+                      >
+                        <Type size={16} /> Name Style
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setVipTab('profile')}
+                        className={`flex-1 px-4 py-3 font-medium text-sm flex items-center justify-center gap-2 transition-all ${
+                          (vipTab === 'profile' || vipTab === 'idcard') 
+                            ? `${isDarkMode ? 'bg-amber-500/30 text-amber-400' : 'bg-amber-500 text-white'} shadow-sm` 
+                            : `${isDarkMode ? 'text-gray-400 hover:text-amber-400 hover:bg-amber-500/10' : 'text-gray-600 hover:text-amber-600 hover:bg-amber-50'}`
+                        }`}
+                      >
+                        <CreditCard size={16} /> Profile Card
+                      </button>
+                    </div>
+
+                    <div className={`p-5 rounded-xl ${isDarkMode ? 'bg-gray-800/30' : 'bg-white'}`}>
+                    
+                    {vipTab === 'name' ? (
+                      <div className="space-y-6">
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>✨ Customize how your name appears in chat and user lists!</p>
+                        
+                        {/* Color Mode Selection */}
+                        <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-gray-900/50' : 'bg-amber-50'}`}>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Palette size={16} className="text-amber-500" /> Color Mode
+                          </label>
+                          <div className="flex gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setVipNameGradient('')}
+                              className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                                !vipNameGradient 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 text-amber-400 ring-2 ring-amber-500/50' : 'bg-amber-500 text-white shadow-md'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <Palette size={16} /> Solid Color
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setVipNameGradient('#ff69b4,#00bfff')}
+                              className={`flex-1 py-2.5 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
+                                vipNameGradient 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 text-amber-400 ring-2 ring-amber-500/50' : 'bg-amber-500 text-white shadow-md'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 text-gray-400 hover:bg-gray-700' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <Layers size={16} /> Gradient
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Name Color - Only show when NOT using gradient */}
+                        {!vipNameGradient && (
+                          <div>
+                            <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                              <Palette size={16} /> Name Color
+                            </label>
+                            <div className="flex gap-4 items-center">
+                              <input
+                                type="color"
+                                value={vipNameColor}
+                                onChange={(e) => setVipNameColor(e.target.value)}
+                                className="w-14 h-14 cursor-pointer border-2 rounded-xl shadow-inner"
+                                style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                              />
+                              <div className="flex-1">
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="360"
+                                  value={(() => {
+                                    const hex = vipNameColor.replace('#', '');
+                                    const r = parseInt(hex.substring(0,2), 16) / 255;
+                                    const g = parseInt(hex.substring(2,4), 16) / 255;
+                                    const b = parseInt(hex.substring(4,6), 16) / 255;
+                                    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                                    let h = 0;
+                                    if (max !== min) {
+                                      const d = max - min;
+                                      switch (max) {
+                                        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                                        case g: h = ((b - r) / d + 2) / 6; break;
+                                        case b: h = ((r - g) / d + 4) / 6; break;
+                                      }
+                                    }
+                                    return Math.round(h * 360);
+                                  })()}
+                                  onChange={(e) => {
+                                    const h = parseInt(e.target.value) / 360;
+                                    const s = 0.8, l = 0.5;
+                                    const hue2rgb = (p: number, q: number, t: number) => {
+                                      if (t < 0) t += 1;
+                                      if (t > 1) t -= 1;
+                                      if (t < 1/6) return p + (q - p) * 6 * t;
+                                      if (t < 1/2) return q;
+                                      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                      return p;
+                                    };
+                                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                                    const p = 2 * l - q;
+                                    const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+                                    const g = Math.round(hue2rgb(p, q, h) * 255);
+                                    const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+                                    const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+                                    setVipNameColor(hex);
+                                  }}
+                                  className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                                  style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}
+                                />
+                              </div>
+                            </div>
+                            {/* Quick Colors */}
+                            <div className="grid grid-cols-8 gap-2 mt-4">
+                              {['#ff69b4', '#ff0000', '#ff8c00', '#ffd700', '#00ff00', '#00bfff', '#8a2be2', '#ff1493'].map(color => (
+                                <button
+                                  key={color}
+                                  type="button"
+                                  onClick={() => setVipNameColor(color)}
+                                  className={`h-10 rounded-lg transition-all ${vipNameColor === color ? 'ring-2 ring-amber-400 ring-offset-2 scale-105' : 'hover:scale-105'} shadow-md`}
+                                  style={{ backgroundColor: color }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Name Gradient - Only show when using gradient */}
+                        {vipNameGradient && (
+                          <div>
+                            <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                              <Layers size={16} className="text-amber-500" /> Gradient Colors
+                            </label>
+                            <div className="space-y-4">
+                              <div className="flex gap-4 items-center">
+                                <input
+                                  type="color"
+                                  value={vipNameGradient?.split(',')[0] || '#ff69b4'}
+                                  onChange={(e) => {
+                                    const secondColor = vipNameGradient?.split(',')[1]?.trim() || '#00bfff';
+                                    setVipNameGradient(`${e.target.value},${secondColor}`);
+                                  }}
+                                  className="w-12 h-12 cursor-pointer border-2 rounded-xl shadow-inner"
+                                  style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                                />
+                                <div className="flex-1">
+                                  <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Start Color</p>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="360"
+                                    value={(() => {
+                                      const color = vipNameGradient?.split(',')[0] || '#ff69b4';
+                                      const hex = color.replace('#', '');
+                                      const r = parseInt(hex.substring(0,2), 16) / 255;
+                                      const g = parseInt(hex.substring(2,4), 16) / 255;
+                                      const b = parseInt(hex.substring(4,6), 16) / 255;
+                                      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                                      let h = 0;
+                                      if (max !== min) {
+                                        const d = max - min;
+                                        switch (max) {
+                                          case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                                          case g: h = ((b - r) / d + 2) / 6; break;
+                                          case b: h = ((r - g) / d + 4) / 6; break;
+                                        }
+                                      }
+                                      return Math.round(h * 360);
+                                    })()}
+                                    onChange={(e) => {
+                                      const h = parseInt(e.target.value) / 360;
+                                      const s = 0.8, l = 0.5;
+                                      const hue2rgb = (p: number, q: number, t: number) => {
+                                        if (t < 0) t += 1;
+                                        if (t > 1) t -= 1;
+                                        if (t < 1/6) return p + (q - p) * 6 * t;
+                                        if (t < 1/2) return q;
+                                        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                        return p;
+                                      };
+                                      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                                      const p = 2 * l - q;
+                                      const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+                                      const g = Math.round(hue2rgb(p, q, h) * 255);
+                                      const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+                                      const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+                                      const secondColor = vipNameGradient?.split(',')[1]?.trim() || '#00bfff';
+                                      setVipNameGradient(`${hex},${secondColor}`);
+                                    }}
+                                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                                    style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="flex gap-4 items-center">
+                                <input
+                                  type="color"
+                                  value={vipNameGradient?.split(',')[1]?.trim() || '#00bfff'}
+                                  onChange={(e) => {
+                                    const firstColor = vipNameGradient?.split(',')[0] || '#ff69b4';
+                                    setVipNameGradient(`${firstColor},${e.target.value}`);
+                                  }}
+                                  className="w-12 h-12 cursor-pointer border-2 rounded-xl shadow-inner"
+                                  style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                                />
+                                <div className="flex-1">
+                                  <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>End Color</p>
+                                  <input
+                                    type="range"
+                                    min="0"
+                                    max="360"
+                                    value={(() => {
+                                      const color = vipNameGradient?.split(',')[1]?.trim() || '#00bfff';
+                                      const hex = color.replace('#', '');
+                                      const r = parseInt(hex.substring(0,2), 16) / 255;
+                                      const g = parseInt(hex.substring(2,4), 16) / 255;
+                                      const b = parseInt(hex.substring(4,6), 16) / 255;
+                                      const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                                      let h = 0;
+                                      if (max !== min) {
+                                        const d = max - min;
+                                        switch (max) {
+                                          case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                                          case g: h = ((b - r) / d + 2) / 6; break;
+                                          case b: h = ((r - g) / d + 4) / 6; break;
+                                        }
+                                      }
+                                      return Math.round(h * 360);
+                                    })()}
+                                    onChange={(e) => {
+                                      const h = parseInt(e.target.value) / 360;
+                                      const s = 0.8, l = 0.5;
+                                      const hue2rgb = (p: number, q: number, t: number) => {
+                                        if (t < 0) t += 1;
+                                        if (t > 1) t -= 1;
+                                        if (t < 1/6) return p + (q - p) * 6 * t;
+                                        if (t < 1/2) return q;
+                                        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                        return p;
+                                      };
+                                      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                                      const p = 2 * l - q;
+                                      const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+                                      const g = Math.round(hue2rgb(p, q, h) * 255);
+                                      const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+                                      const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+                                      const firstColor = vipNameGradient?.split(',')[0] || '#ff69b4';
+                                      setVipNameGradient(`${firstColor},${hex}`);
+                                    }}
+                                    className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                                    style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            {/* Quick Gradients */}
+                            <p className={`text-xs mt-4 mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Quick Presets:</p>
+                            <div className="grid grid-cols-3 gap-2">
+                              {[
+                                { colors: '#ff69b4,#00bfff', label: 'Pink-Blue' },
+                                { colors: '#ff0000,#ffd700', label: 'Fire' },
+                                { colors: '#00ff00,#00bfff', label: 'Mint' },
+                                { colors: '#8a2be2,#ff1493', label: 'Purple-Pink' },
+                                { colors: '#ffd700,#ff8c00', label: 'Gold' },
+                                { colors: '#ff6b6b,#ffecd2', label: 'Sunset' },
+                              ].map(grad => (
+                                <button
+                                  key={grad.colors}
+                                  type="button"
+                                  onClick={() => setVipNameGradient(grad.colors)}
+                                  className={`h-10 rounded-lg text-xs font-medium transition-all shadow-md ${
+                                    vipNameGradient === grad.colors 
+                                      ? 'ring-2 ring-amber-400 ring-offset-2 scale-105' 
+                                      : 'hover:scale-105'
+                                  }`}
+                                  style={{ background: `linear-gradient(90deg, ${grad.colors.split(',')[0]}, ${grad.colors.split(',')[1]})`, color: 'white', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
+                                >
+                                  {grad.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Name Effect */}
+                        <div>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Wand2 size={16} className="text-amber-500" /> Name Animation
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setVipNameEffect('')}
+                              className={`p-3 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                vipNameEffect === '' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <span className={`text-lg ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>—</span>
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>None</p>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setVipNameEffect('rainbow')}
+                              className={`p-3 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                vipNameEffect === 'rainbow' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <Palette size={20} className="text-pink-500" />
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Rainbow</p>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setVipNameEffect('pulse')}
+                              className={`p-3 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                vipNameEffect === 'pulse' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <Zap size={20} className="text-red-500" />
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Pulse</p>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setVipNameEffect('sparkle')}
+                              className={`p-3 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                vipNameEffect === 'sparkle' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <Sparkles size={20} className="text-yellow-500" />
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Sparkle</p>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setVipNameEffect('wave')}
+                              className={`p-3 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                vipNameEffect === 'wave' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <MessageCircle size={20} className="text-blue-500" />
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Wave</p>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setVipNameEffect('glitch')}
+                              className={`p-3 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                vipNameEffect === 'glitch' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'}` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <Settings size={20} className="text-purple-500" />
+                              <p className={`text-xs ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Glitch</p>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Font */}
+                        <div>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Type size={16} className="text-amber-500" /> Font Style
+                          </label>
+                          <select
+                            value={vipFont}
+                            onChange={(e) => setVipFont(e.target.value)}
+                            className={`w-full p-3 rounded-xl transition-all focus:ring-2 focus:ring-amber-500 outline-none ${
+                              isDarkMode 
+                                ? 'bg-gray-800 text-white border border-gray-700' 
+                                : 'bg-white text-gray-800 border border-gray-200'
+                            }`}
+                          >
+                            <option value="default">Default</option>
+                            <option value="mono">Monospace (Coder)</option>
+                            <option value="serif">Serif (Elegant)</option>
+                            <option value="cursive">Cursive (Fancy)</option>
+                            <option value="fantasy">Fantasy (Mystical)</option>
+                            <option value="comic">Comic Sans (Fun)</option>
+                          </select>
+                        </div>
+
+                        {/* Badge - Pixel Style */}
+                        <div>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Crown size={16} className="text-amber-500" /> Badge
+                          </label>
+                          <div className="grid grid-cols-6 gap-2 mb-3">
+                            {[
+                              { icon: '♛', label: 'Crown' },
+                              { icon: '★', label: 'Star' },
+                              { icon: '◆', label: 'Diamond' },
+                              { icon: '♥', label: 'Heart' },
+                              { icon: '✦', label: 'Sparkle' },
+                              { icon: '⚡', label: 'Bolt' },
+                              { icon: '☾', label: 'Moon' },
+                              { icon: '✿', label: 'Flower' },
+                              { icon: '♪', label: 'Music' },
+                              { icon: '⬥', label: 'Gem' },
+                              { icon: '✶', label: 'Star2' },
+                              { icon: '❖', label: 'Cross' },
+                            ].map(badge => (
+                              <button
+                                key={badge.icon}
+                                type="button"
+                                onClick={() => setVipBadge(badge.icon)}
+                                className={`h-12 rounded-xl transition-all flex items-center justify-center text-2xl ${
+                                  vipBadge === badge.icon 
+                                    ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'} scale-105` 
+                                    : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'} hover:scale-105`
+                                }`}
+                                style={{ fontFamily: 'monospace' }}
+                              >
+                                {badge.icon}
+                              </button>
+                            ))}
+                          </div>
+                          <input
+                            type="text"
+                            value={vipBadge}
+                            onChange={(e) => setVipBadge(e.target.value)}
+                            className={`w-full p-3 rounded-xl transition-all focus:ring-2 focus:ring-amber-500 outline-none ${
+                              isDarkMode 
+                                ? 'bg-gray-800 text-white border border-gray-700' 
+                                : 'bg-white text-gray-800 border border-gray-200'
+                            }`}
+                            placeholder="Custom badge (emoji or symbol)"
+                            maxLength={4}
+                          />
+                        </div>
+
+                        {/* Glow Effect */}
+                        <div className={`flex items-center gap-3 p-4 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-200'}`}>
+                          <input
+                            type="checkbox"
+                            id="vipGlow"
+                            checked={vipGlow}
+                            onChange={(e) => setVipGlow(e.target.checked)}
+                            className="w-5 h-5 cursor-pointer accent-amber-500 rounded"
+                          />
+                          <label htmlFor="vipGlow" className={`font-medium cursor-pointer flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Sparkles size={16} className="text-amber-500" /> Enable Name Glow Effect
+                          </label>
+                        </div>
+
+                        {/* Name Preview */}
+                        <div className={`mt-4 p-5 rounded-xl ${isDarkMode ? 'bg-gray-900' : 'bg-gray-800'}`}>
+                          <p className="text-sm text-gray-400 mb-3">💬 Chat Preview:</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{vipBadge}</span>
+                            {vipNameGradient ? (
+                              <span 
+                                className={`font-bold text-lg ${
+                                  vipNameEffect === 'pulse' ? 'animate-pulse' : 
+                                  vipNameEffect === 'sparkle' ? 'vip-effect-sparkle' :
+                                  vipNameEffect === 'wave' ? 'vip-effect-wave' :
+                                  vipNameEffect === 'glitch' ? 'vip-effect-glitch' : ''
+                                }`}
+                                style={{ 
+                                  backgroundImage: `linear-gradient(90deg, ${vipNameGradient})`,
+                                  WebkitBackgroundClip: 'text',
+                                  WebkitTextFillColor: 'transparent',
+                                  backgroundClip: 'text',
+                                  fontFamily: vipFont === 'mono' ? 'monospace' : 
+                                             vipFont === 'serif' ? 'serif' : 
+                                             vipFont === 'cursive' ? 'cursive' : 
+                                             vipFont === 'fantasy' ? 'fantasy' :
+                                             vipFont === 'comic' ? '"Comic Sans MS", cursive' : 'inherit',
+                                  filter: vipGlow ? `drop-shadow(0 0 8px ${vipNameGradient.split(',')[0]})` : 'none',
+                                }}
+                              >
+                                {profile?.name || 'Username'}
+                              </span>
+                            ) : (
+                              <span 
+                                className={`font-bold text-lg ${
+                                  vipNameEffect === 'rainbow' ? 'vip-effect-rainbow' : 
+                                  vipNameEffect === 'pulse' ? 'animate-pulse' : 
+                                  vipNameEffect === 'sparkle' ? 'vip-effect-sparkle' :
+                                  vipNameEffect === 'wave' ? 'vip-effect-wave' :
+                                  vipNameEffect === 'glitch' ? 'vip-effect-glitch' : ''
+                                }`}
+                                style={{ 
+                                  color: vipNameColor,
+                                  textShadow: vipGlow ? `0 0 10px ${vipNameColor}, 0 0 20px ${vipNameColor}` : 'none',
+                                  fontFamily: vipFont === 'mono' ? 'monospace' : 
+                                             vipFont === 'serif' ? 'serif' : 
+                                             vipFont === 'cursive' ? 'cursive' : 
+                                             vipFont === 'fantasy' ? 'fantasy' :
+                                             vipFont === 'comic' ? '"Comic Sans MS", cursive' : 'inherit',
+                                }}
+                              >
+                                {profile?.name || 'Username'}
+                              </span>
+                            )}
+                            <span className="text-gray-400">: Hello everyone! 👋</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (vipTab === 'profile' || vipTab === 'idcard') ? (
+                      <div className="space-y-6">
+                        <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>🎴 Customize your profile card that appears when someone clicks on you!</p>
+                        
+                        {/* Card Type Selection */}
+                        <div>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <CreditCard size={16} className="text-amber-500" /> Card Type
+                          </label>
+                          <div className="flex gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setProfileCardStyle('classic')}
+                              className={`flex-1 py-4 px-4 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                profileCardStyle === 'classic' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'} scale-105` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <User size={24} className={profileCardStyle === 'classic' ? 'text-amber-500' : ''} />
+                              <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Classic Card</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setProfileCardStyle('idcard')}
+                              className={`flex-1 py-4 px-4 rounded-xl font-medium transition-all flex flex-col items-center gap-2 ${
+                                profileCardStyle === 'idcard' 
+                                  ? `${isDarkMode ? 'bg-amber-500/30 ring-2 ring-amber-500/50' : 'bg-amber-100 ring-2 ring-amber-400'} scale-105` 
+                                  : `${isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'}`
+                              }`}
+                            >
+                              <CreditCard size={24} className={profileCardStyle === 'idcard' ? 'text-amber-500' : ''} />
+                              <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>ID Card</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {profileCardStyle === 'classic' ? (
+                          <>
+                        {/* Card Background Color */}
+                        <div>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Image size={16} className="text-amber-500" /> Card Background
+                          </label>
+                          
+                          {/* Color Picker */}
+                          <div className="space-y-4">
+                            <div className="flex gap-4 items-center">
+                              <input
+                                type="color"
+                                value={vipProfileBg?.split(',')[0] || '#60496e'}
+                                onChange={(e) => {
+                                  const secondColor = vipProfileBg?.split(',')[1]?.trim() || '#71C4FF';
+                                  setVipProfileBg(`${e.target.value},${secondColor}`);
+                                }}
+                                className="w-14 h-14 cursor-pointer border-2 rounded-xl shadow-inner"
+                                style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                              />
+                              <div className="flex-1">
+                                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Primary Color</p>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="360"
+                                  value={(() => {
+                                    const color = vipProfileBg?.split(',')[0] || '#60496e';
+                                    const hex = color.replace('#', '');
+                                    const r = parseInt(hex.substring(0,2), 16) / 255;
+                                    const g = parseInt(hex.substring(2,4), 16) / 255;
+                                    const b = parseInt(hex.substring(4,6), 16) / 255;
+                                    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                                    let h = 0;
+                                    if (max !== min) {
+                                      const d = max - min;
+                                      switch (max) {
+                                        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                                        case g: h = ((b - r) / d + 2) / 6; break;
+                                        case b: h = ((r - g) / d + 4) / 6; break;
+                                      }
+                                    }
+                                    return Math.round(h * 360);
+                                  })()}
+                                  onChange={(e) => {
+                                    const h = parseInt(e.target.value) / 360;
+                                    const s = 0.5, l = 0.4;
+                                    const hue2rgb = (p: number, q: number, t: number) => {
+                                      if (t < 0) t += 1;
+                                      if (t > 1) t -= 1;
+                                      if (t < 1/6) return p + (q - p) * 6 * t;
+                                      if (t < 1/2) return q;
+                                      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                      return p;
+                                    };
+                                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                                    const p = 2 * l - q;
+                                    const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+                                    const g = Math.round(hue2rgb(p, q, h) * 255);
+                                    const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+                                    const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+                                    const secondColor = vipProfileBg?.split(',')[1]?.trim() || '#71C4FF';
+                                    setVipProfileBg(`${hex},${secondColor}`);
+                                  }}
+                                  className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                                  style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}
+                                />
+                              </div>
+                            </div>
+                            
+                            <div className="flex gap-4 items-center">
+                              <input
+                                type="color"
+                                value={vipProfileBg?.split(',')[1]?.trim() || '#71C4FF'}
+                                onChange={(e) => {
+                                  const firstColor = vipProfileBg?.split(',')[0] || '#60496e';
+                                  setVipProfileBg(`${firstColor},${e.target.value}`);
+                                }}
+                                className="w-14 h-14 cursor-pointer border-2 rounded-xl shadow-inner"
+                                style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                              />
+                              <div className="flex-1">
+                                <p className={`text-xs mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Secondary Color</p>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="360"
+                                  value={(() => {
+                                    const color = vipProfileBg?.split(',')[1]?.trim() || '#71C4FF';
+                                    const hex = color.replace('#', '');
+                                    const r = parseInt(hex.substring(0,2), 16) / 255;
+                                    const g = parseInt(hex.substring(2,4), 16) / 255;
+                                    const b = parseInt(hex.substring(4,6), 16) / 255;
+                                    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                                    let h = 0;
+                                    if (max !== min) {
+                                      const d = max - min;
+                                      switch (max) {
+                                        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                                        case g: h = ((b - r) / d + 2) / 6; break;
+                                        case b: h = ((r - g) / d + 4) / 6; break;
+                                      }
+                                    }
+                                    return Math.round(h * 360);
+                                  })()}
+                                  onChange={(e) => {
+                                    const h = parseInt(e.target.value) / 360;
+                                    const s = 0.6, l = 0.55;
+                                    const hue2rgb = (p: number, q: number, t: number) => {
+                                      if (t < 0) t += 1;
+                                      if (t > 1) t -= 1;
+                                      if (t < 1/6) return p + (q - p) * 6 * t;
+                                      if (t < 1/2) return q;
+                                      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                      return p;
+                                    };
+                                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                                    const p = 2 * l - q;
+                                    const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+                                    const g = Math.round(hue2rgb(p, q, h) * 255);
+                                    const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+                                    const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+                                    const firstColor = vipProfileBg?.split(',')[0] || '#60496e';
+                                    setVipProfileBg(`${firstColor},${hex}`);
+                                  }}
+                                  className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                                  style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Preset Gradients */}
+                          <p className={`text-xs mt-4 mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Quick Presets:</p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {[
+                              { value: '#60496e,#71C4FF', label: 'Default' },
+                              { value: '#1a1a2e,#4a4a6e', label: 'Dark' },
+                              { value: '#2d1b69,#8a2be2', label: 'Purple' },
+                              { value: '#ff69b4,#ff1493', label: 'Pink' },
+                              { value: '#00bfff,#0077ff', label: 'Ocean' },
+                              { value: '#ff6b6b,#ffd93d', label: 'Sunset' },
+                              { value: '#00d4aa,#00ffcc', label: 'Mint' },
+                              { value: '#ffd700,#ff8c00', label: 'Gold' },
+                            ].map(preset => (
+                              <button
+                                key={preset.value}
+                                type="button"
+                                onClick={() => setVipProfileBg(preset.value)}
+                                className={`h-10 rounded-lg text-xs font-medium transition-all text-white shadow-md ${
+                                  vipProfileBg === preset.value 
+                                    ? 'ring-2 ring-amber-400 ring-offset-2 scale-105' 
+                                    : 'hover:scale-105'
+                                }`}
+                                style={{ 
+                                  background: `linear-gradient(145deg, ${preset.value.split(',')[0]}, ${preset.value.split(',')[1]})` 
+                                }}
+                              >
+                                {preset.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Card Glow */}
+                        <div>
+                          <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Zap size={16} className="text-amber-500" /> Card Glow
+                          </label>
+                          <div className="flex gap-4 items-center">
+                            <input
+                              type="color"
+                              value={vipProfileGlow || '#ff69b4'}
+                              onChange={(e) => setVipProfileGlow(e.target.value)}
+                              className="w-14 h-14 cursor-pointer border-2 rounded-xl shadow-inner"
+                              style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                            />
+                            <div className="flex-1">
+                              <input
+                                type="range"
+                                min="0"
+                                max="360"
+                                value={(() => {
+                                  const color = vipProfileGlow || '#ff69b4';
+                                  const hex = color.replace('#', '');
+                                  const r = parseInt(hex.substring(0,2), 16) / 255;
+                                  const g = parseInt(hex.substring(2,4), 16) / 255;
+                                  const b = parseInt(hex.substring(4,6), 16) / 255;
+                                  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                                  let h = 0;
+                                  if (max !== min) {
+                                    const d = max - min;
+                                    switch (max) {
+                                      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                                      case g: h = ((b - r) / d + 2) / 6; break;
+                                      case b: h = ((r - g) / d + 4) / 6; break;
+                                    }
+                                  }
+                                  return Math.round(h * 360);
+                                })()}
+                                onChange={(e) => {
+                                  const h = parseInt(e.target.value) / 360;
+                                  const s = 0.7, l = 0.6;
+                                  const hue2rgb = (p: number, q: number, t: number) => {
+                                    if (t < 0) t += 1;
+                                    if (t > 1) t -= 1;
+                                    if (t < 1/6) return p + (q - p) * 6 * t;
+                                    if (t < 1/2) return q;
+                                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                    return p;
+                                  };
+                                  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                                  const p = 2 * l - q;
+                                  const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+                                  const g = Math.round(hue2rgb(p, q, h) * 255);
+                                  const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+                                  const hex = `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+                                  setVipProfileGlow(hex);
+                                }}
+                                className="w-full h-3 rounded-full appearance-none cursor-pointer"
+                                style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setVipProfileGlow('')}
+                              className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${
+                                isDarkMode 
+                                  ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                                  : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                              }`}
+                            >
+                              No Glow
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Profile Card Preview */}
+                        <div className="mt-4">
+                          <p className={`text-sm mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>👀 Room Profile Card Preview:</p>
+                          <p className={`text-xs mb-3 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>This is how your profile card will look when someone clicks on you in a room!</p>
+                          <div className="flex justify-center transform scale-90 origin-center">
+                            <ProfileCard
+                              avatarUrl={`/api/avatar/${profile.name}`}
+                              name={vipBadge ? `${vipBadge} ${profile.name}` : profile.name}
+                              title="⭐ VIP Member"
+                              handle={`@${profile.name}`}
+                              status="Online"
+                              showUserInfo={true}
+                              enableTilt={true}
+                              contactText="View Profile"
+                              behindGlowEnabled={!!vipProfileGlow}
+                              behindGlowColor={vipProfileGlow || undefined}
+                              innerGradient={
+                                vipProfileBg 
+                                  ? (vipProfileBg.includes(',')
+                                    ? `linear-gradient(145deg, ${vipProfileBg.split(',')[0]}cc 0%, ${vipProfileBg.split(',')[1]}88 100%)`
+                                    : `linear-gradient(145deg, ${vipProfileBg}cc 0%, ${vipProfileBg}44 100%)`)
+                                  : undefined
+                              }
+                              nameColor={vipCardNameGradient ? undefined : (vipCardNameColor || (vipNameGradient ? undefined : vipNameColor))}
+                              nameGradient={vipCardNameGradient || vipNameGradient || undefined}
+                              nameFont={vipFont || undefined}
+                              nameGlow={vipCardNameGlow || vipGlow}
+                            />
+                          </div>
+                        </div>
+                          
+                        {/* ProfileCard Name Settings */}
+                        <div className={`p-5 rounded-xl ${isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900' : 'bg-gradient-to-br from-pink-50 to-purple-50'}`}>
+                          <h4 className={`font-semibold text-sm mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                            <Type size={16} className="text-amber-500" /> ProfileCard Name Style
+                          </h4>
+                          <p className={`text-xs mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Customize your name color specifically for your ProfileCard (separate from chat)
+                          </p>
+
+                          {/* ProfileCard Name Color */}
+                          <div className="mb-4">
+                            <label className={`block text-xs font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Name Color</label>
+                            <div className="flex gap-2">
+                              <input
+                                type="color"
+                                value={vipCardNameColor || '#ffffff'}
+                                onChange={(e) => setVipCardNameColor(e.target.value)}
+                                className="w-12 h-10 rounded-lg border-2 cursor-pointer shadow-inner"
+                                style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                              />
+                              <input
+                                type="text"
+                                value={vipCardNameColor}
+                                onChange={(e) => setVipCardNameColor(e.target.value)}
+                                placeholder="#ffffff"
+                                className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all focus:ring-2 focus:ring-amber-500 outline-none ${
+                                  isDarkMode 
+                                    ? 'bg-gray-700 text-white border border-gray-600' 
+                                    : 'bg-white text-gray-800 border border-gray-200'
+                                }`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setVipCardNameColor('')}
+                                className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${
+                                  isDarkMode 
+                                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                                    : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                }`}
+                              >
+                                Reset
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* ProfileCard Name Gradient */}
+                          <div className="mb-4">
+                            <label className={`block text-xs font-medium mb-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Name Gradient</label>
+                            <div className="flex gap-2">
+                              <input
+                                type="color"
+                                value={vipCardNameGradient?.split(',')[0]?.trim() || '#ff0080'}
+                                onChange={(e) => {
+                                  const color2 = vipCardNameGradient?.split(',')[1]?.trim() || '#8000ff';
+                                  setVipCardNameGradient(`${e.target.value}, ${color2}`);
+                                }}
+                                className="w-10 h-10 rounded-lg border-2 cursor-pointer shadow-inner"
+                                style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                              />
+                              <input
+                                type="color"
+                                value={vipCardNameGradient?.split(',')[1]?.trim() || '#8000ff'}
+                                onChange={(e) => {
+                                  const color1 = vipCardNameGradient?.split(',')[0]?.trim() || '#ff0080';
+                                  setVipCardNameGradient(`${color1}, ${e.target.value}`);
+                                }}
+                                className="w-10 h-10 rounded-lg border-2 cursor-pointer shadow-inner"
+                                style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                              />
+                              <input
+                                type="text"
+                                value={vipCardNameGradient}
+                                onChange={(e) => setVipCardNameGradient(e.target.value)}
+                                placeholder="#ff0080, #8000ff"
+                                className={`flex-1 px-3 py-2 rounded-lg text-sm transition-all focus:ring-2 focus:ring-amber-500 outline-none ${
+                                  isDarkMode 
+                                    ? 'bg-gray-700 text-white border border-gray-600' 
+                                    : 'bg-white text-gray-800 border border-gray-200'
+                                }`}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setVipCardNameGradient('')}
+                                className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${
+                                  isDarkMode 
+                                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                                    : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                }`}
+                              >
+                                Reset
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* ProfileCard Name Glow */}
+                          <div>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={vipCardNameGlow}
+                                onChange={(e) => setVipCardNameGlow(e.target.checked)}
+                                className="w-5 h-5 rounded-lg cursor-pointer accent-amber-500"
+                              />
+                              <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Enable Name Glow Effect</span>
+                            </label>
+                          </div>
+                        </div>
+                          </>
+                        ) : profileCardStyle === 'idcard' ? (
+                          <>
+                            {/* ID Card Style Selection */}
+                            <div>
+                              <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                                <Palette size={16} className="text-amber-500" /> Card Style
+                              </label>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {Object.entries(ID_CARD_STYLES).map(([key, style]) => (
+                                  <button
+                                    key={key}
+                                    type="button"
+                                    onClick={() => setIdCardStyle(key as IDCardStyleKey)}
+                                    className={`p-3 rounded-xl transition-all flex flex-col items-center gap-2 ${
+                                      idCardStyle === key 
+                                        ? `${isDarkMode ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-amber-400'} scale-105` 
+                                        : `${isDarkMode ? 'opacity-70 hover:opacity-100' : 'opacity-80 hover:opacity-100'}`
+                                    }`}
+                                    style={{ 
+                                      background: style.bodyBg,
+                                      color: style.textColor,
+                                    }}
+                                  >
+                                    <div 
+                                      className="w-6 h-6 rounded-full border-2"
+                                      style={{ borderColor: style.accentColor, backgroundColor: `${style.accentColor}30` }}
+                                    />
+                                    <span className="text-xs font-bold">{style.name}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Custom Accent Color */}
+                            <div>
+                              <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                                <Sparkles size={16} className="text-amber-500" /> Custom Accent Color (Optional)
+                              </label>
+                              <div className="flex gap-4 items-center">
+                                <input
+                                  type="color"
+                                  value={idCardCustomAccent || ID_CARD_STYLES[idCardStyle].accentColor}
+                                  onChange={(e) => setIdCardCustomAccent(e.target.value)}
+                                  className="w-14 h-14 cursor-pointer border-2 rounded-xl shadow-inner"
+                                  style={{ borderColor: isDarkMode ? '#374151' : '#d1d5db' }}
+                                />
+                                <div className="flex-1">
+                                  <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Override accent color</p>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setIdCardCustomAccent('')}
+                                  className={`px-4 py-2 text-xs font-medium rounded-lg transition-all ${
+                                    isDarkMode 
+                                      ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' 
+                                      : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+                                  }`}
+                                >
+                                  Reset
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Display Options */}
+                            <div>
+                              <label className={`block text-sm font-semibold mb-3 flex items-center gap-2 ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>
+                                <Settings size={16} className="text-amber-500" /> Display Options
+                              </label>
+                              <div className="space-y-2">
+                                <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                                  isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'
+                                }`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={idCardShowLevel}
+                                    onChange={(e) => setIdCardShowLevel(e.target.checked)}
+                                    className="w-5 h-5 accent-amber-500 rounded"
+                                  />
+                                  <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Show Level</span>
+                                </label>
+                                <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                                  isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'
+                                }`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={idCardShowXp}
+                                    onChange={(e) => setIdCardShowXp(e.target.checked)}
+                                    className="w-5 h-5 accent-amber-500 rounded"
+                                  />
+                                  <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Show XP Bar</span>
+                                </label>
+                                <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                                  isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'
+                                }`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={idCardShowHologram}
+                                    onChange={(e) => setIdCardShowHologram(e.target.checked)}
+                                    className="w-5 h-5 accent-amber-500 rounded"
+                                  />
+                                  <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Show Hologram</span>
+                                </label>
+                                <label className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all ${
+                                  isDarkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-white hover:bg-gray-50 border border-gray-200'
+                                }`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={idCardShowScanlines}
+                                    onChange={(e) => setIdCardShowScanlines(e.target.checked)}
+                                    className="w-5 h-5 accent-amber-500 rounded"
+                                  />
+                                  <span className={`font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Show Scanlines Effect</span>
+                                </label>
+                              </div>
+                            </div>
+
+                            {/* ID Card Preview */}
+                            <div className="mt-4">
+                              <p className={`text-sm mb-3 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>👀 ID Card Preview:</p>
+                              <div className={`flex justify-center p-4 rounded-xl ${isDarkMode ? 'bg-gray-900' : 'bg-gray-800'}`}>
+                                <IDCard
+                                  username={profile.name}
+                                  title={profile.isFounder ? 'Founder' : (profile.isVIP ? 'VIP' : 'Member')}
+                                  level={Math.floor(profile.watchTime / 3600) + 1}
+                                  xp={profile.watchTime % 3600}
+                                  maxXp={3600}
+                                  avatarUrl={`/api/avatar/${profile.name}`}
+                                  cardStyle={idCardStyle}
+                                  customAccent={idCardCustomAccent || undefined}
+                                  showLevel={idCardShowLevel}
+                                  showXpBar={idCardShowXp}
+                                  showHologram={idCardShowHologram}
+                                  showScanlines={idCardShowScanlines}
+                                  size="lg"
+                                />
+                              </div>
+                            </div>
+                          </>
+                        ) : null}
+                      </div>
+                    ) : null}
+
+                    {vipMessage && (
+                      <div className={`mt-4 p-4 text-center font-medium rounded-xl ${vipMessage.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {vipMessage}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      disabled={isVipLoading}
+                      onClick={async () => {
+                        setIsVipLoading(true);
+                        setVipMessage('');
+                        try {
+                          const res = await fetch('/api/user/vip', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                              vipNameColor, 
+                              vipFont, 
+                              vipBadge, 
+                              vipGlow,
+                              vipNameEffect,
+                              vipNameGradient,
+                              vipProfileBg,
+                              vipProfileBanner,
+                              vipProfileAccent,
+                              vipProfileBorder,
+                              vipProfileGlow,
+                              // ProfileCard name settings
+                              vipCardNameColor,
+                              vipCardNameGradient,
+                              vipCardNameGlow,
+                              // ID Card settings
+                              profileCardStyle,
+                              idCardStyle,
+                              idCardCustomHeader,
+                              idCardCustomBody,
+                              idCardCustomAccent,
+                              idCardCustomBorder,
+                              idCardShowLevel,
+                              idCardShowXp,
+                              idCardShowHologram,
+                              idCardShowScanlines,
+                            }),
+                          });
+                          if (!res.ok) throw new Error('Failed to save');
+                          setVipMessage('VIP settings saved successfully! ✨');
+                        } catch (err) {
+                          setVipMessage('Failed to save VIP settings');
+                        } finally {
+                          setIsVipLoading(false);
+                        }
+                      }}
+                      className="w-full mt-6 py-4 font-semibold text-white rounded-xl shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 flex items-center justify-center gap-2"
+                    >
+                      {isVipLoading ? 'Saving...' : <><Crown size={20} /> Save VIP Settings</>}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

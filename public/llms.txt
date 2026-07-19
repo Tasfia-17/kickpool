@@ -1,0 +1,33 @@
+# CinePurr
+
+> CinePurr is a real-time watch party platform where friends can watch movies, videos, and streams together in synchronized rooms with live chat.
+
+## Features
+
+- Create and join watch rooms with real-time video synchronization
+- Live chat with emoji reactions and Pokémon-themed UI
+- User profiles with achievements, badges, and XP leveling
+- Study rooms with Pomodoro timer, lo-fi radio, and productivity tools
+- Virtual pet companion that evolves as you level up
+- Multiple Pokémon themes to customize the experience
+- Mobile-friendly progressive web app (PWA)
+
+## Pages
+
+- [Home](https://cinepurr.me/): Browse public rooms, create rooms, or join via invite code
+- [Register](https://cinepurr.me/register): Create a free account
+- [Login](https://cinepurr.me/login): Sign in to your account
+- [Study Room](https://cinepurr.me/study): Pomodoro timer, to-do lists, calculator, and lo-fi radio
+- [Games](https://cinepurr.me/games): Mini-games including Abyssal Watch
+- [About](https://cinepurr.me/about): Learn more about CinePurr
+- [Privacy](https://cinepurr.me/privacy): Privacy policy and terms of service
+- [Contact](https://cinepurr.me/contact): Get in touch with the team
+
+## Tech Stack
+
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- Prisma ORM
+- Socket.IO for real-time communication
+- NextAuth.js for authentication

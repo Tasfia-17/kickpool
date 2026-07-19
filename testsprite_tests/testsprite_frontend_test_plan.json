@@ -1,0 +1,435 @@
+[
+  {
+    "id": "TC002",
+    "title": "Discover rooms with sort/filter and join a public room",
+    "description": "Verifies a guest can browse rooms on the homepage, apply a trending/recent sort or filter, and join a room where playback and chat are visible.",
+    "category": "Room Discovery (Homepage)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Select a trending or recent sort/filter for the room list"
+      },
+      {
+        "type": "action",
+        "description": "Click a public room from the room list to join it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify video playback is displayed in the room"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify real-time chat is displayed in the room"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Send a chat message and see it stored in recent history",
+    "description": "Verifies a viewer can send a chat message and the message appears in the chat history for the current session.",
+    "category": "Chat & Reactions",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click a public room from the room list"
+      },
+      {
+        "type": "action",
+        "description": "Wait for the chat input to be available"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"Message to persist in history\" into the chat message input"
+      },
+      {
+        "type": "action",
+        "description": "Send the chat message"
+      },
+      {
+        "type": "action",
+        "description": "Scroll the chat history upward and then back to the newest messages"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the sent chat message appears in the chat history"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Log in to access personalized homepage",
+    "description": "Verifies a user can log in with valid credentials and is taken to a personalized homepage state.",
+    "category": "User Login",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_USER}} into the email or username field"
+      },
+      {
+        "type": "action",
+        "description": "Fill {{LOGIN_PASSWORD}} into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the homepage in a logged-in state"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Join a room from recommendations or recent rooms widget",
+    "description": "Verifies a guest can open a room from the recommendations/recent widget and see room participants information.",
+    "category": "Room Discovery (Homepage)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the recommendations or recent rooms widget"
+      },
+      {
+        "type": "action",
+        "description": "Click a room in the widget to join it"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the room shows host and viewer list information"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Add a YouTube URL to the room queue",
+    "description": "A user can paste a valid YouTube URL in the add dialog and submit it so the video is added to the room queue.",
+    "category": "Video Search (TMDB & YouTube URL)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click a public room from the room list"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to open the video add dialog for direct URLs"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid YouTube URL into the URL field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the URL to add the video"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a new YouTube-based item appears in the room queue"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Register a new account and reach homepage",
+    "description": "Verifies a new user can register successfully and is redirected to the homepage after registration.",
+    "category": "User Registration",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill a unique username into the username field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a unique email into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the homepage after registration"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "View daily quests and XP on homepage after login and see progress change after joining a room",
+    "description": "A logged-in member can see daily quests and XP on the homepage and after joining a room the quest progress updates accordingly.",
+    "category": "Progress, Daily Quests & Leaderboards",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill a username field with test_user_quests"
+      },
+      {
+        "type": "action",
+        "description": "Fill an email field with test_user_quests@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill a password field with TestPassword123!"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the daily quests and XP area on the homepage"
+      },
+      {
+        "type": "action",
+        "description": "Click a public room from the room list"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to return to the homepage"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify at least one daily quest shows updated progress and the XP display is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC020",
+    "title": "Browse leaderboards and open a user profile from a leaderboard entry",
+    "description": "A member can open the leaderboards, view top users, and navigate to a user profile from the list.",
+    "category": "Progress, Daily Quests & Leaderboards",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill a username field with test_user_leaderboards"
+      },
+      {
+        "type": "action",
+        "description": "Fill an email field with test_user_leaderboards@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill a password field with TestPassword123!"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "action",
+        "description": "Scroll to the leaderboards section on the homepage"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify leaderboards are displayed for multiple categories (such as watch time, level, streak, and messages)"
+      },
+      {
+        "type": "action",
+        "description": "Click a username from the leaderboards"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a user profile page is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC021",
+    "title": "Validate email format during registration",
+    "description": "Verifies registration blocks submission with an inline validation error when the email format is invalid.",
+    "category": "User Registration",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill a unique username into the username field"
+      },
+      {
+        "type": "action",
+        "description": "Fill invalid-email-format into the email field"
+      },
+      {
+        "type": "action",
+        "description": "Fill a valid password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an inline email validation error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC022",
+    "title": "Prevent adding an invalid video URL to the queue",
+    "description": "Verifies the queue add-by-URL flow rejects an invalid URL with a visible validation error and does not add an item to the queue.",
+    "category": "Video Queue & Voting",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click a public room from the room list"
+      },
+      {
+        "type": "action",
+        "description": "Open the add-to-queue URL input or add-by-link flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill \"not-a-url\" into the video URL field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the video to the queue"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a URL validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no new queued item is added to the queue list"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC024",
+    "title": "Show invalid-credentials error on failed login",
+    "description": "Verifies submitting incorrect login credentials shows an invalid-credentials error and the user remains unauthenticated.",
+    "category": "User Login",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill invalid_user into the email or username field"
+      },
+      {
+        "type": "action",
+        "description": "Fill wrong_password into the password field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an invalid credentials error is visible"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC027",
+    "title": "Watch history empty state for a new account",
+    "description": "A newly registered member with no watched items can open watch history and see an empty state instead of a blank or broken view.",
+    "category": "Watchlist & Watch History",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /register"
+      },
+      {
+        "type": "action",
+        "description": "Fill a username field with test_user_history_empty"
+      },
+      {
+        "type": "action",
+        "description": "Fill an email field with test_user_history_empty@example.com"
+      },
+      {
+        "type": "action",
+        "description": "Fill a password field with TestPassword123!"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "action",
+        "description": "Click the control to open the watch history window"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state is displayed for watch history"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC028",
+    "title": "Handle empty room list state on homepage",
+    "description": "Verifies the homepage shows a clear empty state when no public rooms are available to browse.",
+    "category": "Room Discovery (Homepage)",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Select a sort/filter option that yields no rooms if available"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty state message is visible for the room list"
+      }
+    ],
+    "priority": "Low"
+  }
+]

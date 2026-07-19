@@ -1,0 +1,460 @@
+/* =============================================
+   CINEPURR PROFILE — Visual Theme Layer
+   ============================================= */
+
+.profile-root {
+  color: var(--profile-text, #f8fafc);
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+/* ---------- panels ---------- */
+.pixel-panel {
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.pixel-panel:hover {
+  box-shadow: 14px 14px 0px rgba(0, 0, 0, 0.32) !important;
+}
+
+/* ---------- labels ---------- */
+.pixel-label {
+  color: var(--profile-label-color, rgba(255, 255, 255, 0.72));
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+/* ---------- prose ---------- */
+.profile-prose {
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  line-height: 1.6;
+  color: var(--profile-muted-text, rgba(255, 255, 255, 0.8));
+  letter-spacing: 0.01em;
+}
+
+.profile-muted {
+  color: var(--profile-muted-text, rgba(255, 255, 255, 0.8));
+}
+
+/* ---------- chips ---------- */
+.profile-chip {
+  background: var(--profile-chip-bg, rgba(255, 255, 255, 0.08));
+  border-color: var(--profile-chip-border, rgba(255, 255, 255, 0.12));
+  color: var(--profile-chip-text, #f8fafc);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.profile-chip:hover {
+  background: var(--profile-chip-bg, rgba(255, 255, 255, 0.14));
+  transform: translateY(-1px);
+}
+
+/* ---------- soft panels ---------- */
+.profile-soft-panel {
+  background: var(--profile-soft-panel, rgba(0, 0, 0, 0.22));
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+}
+
+.profile-soft-panel:hover {
+  background: var(--profile-soft-panel, rgba(0, 0, 0, 0.28));
+  transform: translateY(-1px);
+}
+
+/* ---------- tabs ---------- */
+.retro-tab {
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.24);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.retro-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.28);
+}
+
+.retro-tab:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- hideout grid ---------- */
+.hideout-grid {
+  align-items: start;
+}
+
+/* ---------- CRT screen ---------- */
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    transparent 18%,
+    transparent 82%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
+}
+
+/* ---------- scene scanlines ---------- */
+.scene-scanlines {
+  position: relative;
+}
+
+.scene-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  opacity: 0.7;
+}
+
+/* ---------- ambient flicker ---------- */
+.ambient-flicker {
+  animation: ambient-flicker 5s ease-in-out infinite;
+}
+
+/* ---------- shelf pedestals ---------- */
+.shelf-pedestal {
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shelf-pedestal:hover {
+  transform: translateY(-2px);
+}
+
+.shelf-pedestal::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -6px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  transition: opacity 0.2s ease;
+}
+
+.shelf-pedestal:hover::after {
+  opacity: 0.6;
+}
+
+/* ---------- passport drawer ---------- */
+.passport-drawer {
+  animation: slide-up 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- journey trail ---------- */
+.journey-trail {
+  position: relative;
+}
+
+.journey-trail::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.08)
+  );
+}
+
+/* ---------- VIP name glow ---------- */
+.vip-name-glow {
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* ---------- admin rainbow ---------- */
+.purr-admin-rainbow {
+  background-image: linear-gradient(
+    90deg,
+    #ff0000,
+    #ff7f00,
+    #ffff00,
+    #00ff00,
+    #0000ff,
+    #4b0082,
+    #8b00ff,
+    #ff0000
+  );
+  background-size: 200% auto;
+  animation: gradient-shift 3s linear infinite;
+}
+
+/* ---------- custom scrollbar ---------- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+/* ---------- settings form inputs ---------- */
+.settings-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.35);
+  color: #f8fafc;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  backdrop-filter: blur(6px);
+}
+
+.settings-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.settings-input:focus {
+  border-color: var(--profile-chip-border, rgba(255, 255, 255, 0.4));
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.settings-input:hover:not(:focus) {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* ---------- settings section containers ---------- */
+.settings-section-card {
+  border-radius: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1.25rem;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.25s ease;
+}
+
+.settings-section-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- settings labels ---------- */
+.settings-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 0.5rem;
+  color: var(--profile-label-color, rgba(255, 255, 255, 0.55));
+}
+
+/* ---------- settings buttons ---------- */
+.settings-save-btn {
+  width: 100%;
+  padding: 1rem;
+  font-weight: 700;
+  color: #0a0e16;
+  border-radius: 16px;
+  border: 3px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.settings-save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.1);
+}
+
+.settings-save-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- VIP section styling ---------- */
+.vip-section-card {
+  border-radius: 22px;
+  border-width: 4px;
+  padding: 1.25rem;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.28);
+  background: linear-gradient(180deg, rgba(21, 27, 38, 0.92) 0%, rgba(10, 14, 22, 0.88) 100%);
+  backdrop-filter: blur(10px);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.vip-section-card:hover {
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.32);
+}
+
+/* ---------- VIP color inputs ---------- */
+.vip-color-input {
+  height: 3rem;
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.28);
+  padding: 0.25rem;
+  cursor: pointer;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.vip-color-input:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.vip-color-input:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+}
+
+/* ---------- VIP select inputs ---------- */
+.vip-select-input {
+  width: 100%;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem 1rem;
+  color: #f8fafc;
+  font-size: 0.875rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.vip-select-input:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.vip-select-input:focus {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ---------- VIP checkbox inputs ---------- */
+.vip-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 0.85rem 1rem;
+  color: #f8fafc;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+}
+
+.vip-checkbox-row:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* =============================================
+   KEYFRAMES
+   ============================================= */
+
+@keyframes ambient-flicker {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  45% {
+    filter: brightness(0.97);
+  }
+  52% {
+    filter: brightness(1.02);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =============================================
+   REDUCED MOTION
+   ============================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .retro-tab,
+  .ambient-flicker,
+  .passport-drawer,
+  .purr-admin-rainbow {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .retro-tab:hover {
+    transform: none;
+  }
+
+  .scene-scanlines::after,
+  .crt-screen::after {
+    opacity: 0.28;
+  }
+
+  .pixel-panel:hover {
+    box-shadow: inherit !important;
+  }
+
+  .profile-chip:hover,
+  .profile-soft-panel:hover,
+  .shelf-pedestal:hover {
+    transform: none;
+  }
+}

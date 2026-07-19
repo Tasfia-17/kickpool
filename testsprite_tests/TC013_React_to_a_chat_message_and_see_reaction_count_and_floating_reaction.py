@@ -1,0 +1,92 @@
+import os
+import asyncio
+from playwright import async_api
+from playwright.async_api import expect
+
+async def run_test():
+    pw = None
+    browser = None
+    context = None
+
+    try:
+        # Start a Playwright session in asynchronous mode
+        pw = await async_api.async_playwright().start()
+
+        # Launch a Chromium browser in headless mode with custom arguments
+        browser = await pw.chromium.launch(
+            headless=True,
+            args=[
+                "--window-size=1280,720",         # Set the browser window size
+                "--disable-dev-shm-usage",        # Avoid using /dev/shm which can cause issues in containers
+                "--ipc=host",                     # Use host-level IPC for better stability
+                ""                # Run the browser in a single process mode
+            ],
+        )
+
+        # Create a new browser context (like an incognito window)
+        context = await browser.new_context()
+        context.set_default_timeout(5000)
+
+        # Open a new page in the browser context
+        page = await context.new_page()
+
+        # Interact with the page elements to simulate user flow
+        # -> Navigate to http://localhost:3000
+        await page.goto("http://localhost:3000")
+        
+        # -> Navigate to the site root (/) so I can access the room list and join a public room.
+        await page.goto("http://localhost:3000/")
+        
+        # -> Dismiss the welcome modal so the server/room list and room 'Join' buttons are accessible, then click the public room entry (Resque's Room) to join.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/main/div[7]/div/div[3]/div/button').nth(0)
+        await asyncio.sleep(3); await elem.click()
+        
+        # -> Click the public room entry 'Resque's Room' (JOIN >>) to join the room and reach the chat UI.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/main/div[5]/div/div[2]/div/div/div[2]/a').nth(0)
+        await asyncio.sleep(3); await elem.click()
+        
+        # -> Fill in username and password and click 'Sign In' to log in as user 'Lucario', then continue to join a public room.
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[3]/div/main/div[6]/form/div/div/input').nth(0)
+        await asyncio.sleep(3); await elem.fill('Lucario')
+        
+        frame = context.pages[-1]
+        # Input text
+        elem = frame.locator('xpath=/html/body/div[3]/div/main/div[6]/form/div[2]/div/input').nth(0)
+        await asyncio.sleep(3); await elem.fill(os.environ.get('DEMO_PASSWORD', 'demo_pass'))
+        
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/main/div[6]/form/button').nth(0)
+        await asyncio.sleep(3); await elem.click()
+        
+        # -> Navigate to the site root (/) to access the server/room list so we can create or join a room and continue the test.
+        await page.goto("http://localhost:3000/")
+        
+        # -> Click the public room entry 'Resque\'s Room' (JOIN) to trigger join/sign-in flow and reach the room page or login page.
+        frame = context.pages[-1]
+        # Click element
+        elem = frame.locator('xpath=/html/body/div[3]/div/main/div[5]/div/div[2]/div/div/div[2]/a').nth(0)
+        await asyncio.sleep(3); await elem.click()
+        
+        # --> Assertions to verify final state
+        frame = context.pages[-1]
+        assert await frame.locator("xpath=//*[contains(., '❤️ 1')]").nth(0).is_visible(), "The reacted message should show an updated reaction count after the viewer adds an emoji reaction",
+        assert await frame.locator("xpath=//*[contains(., '❤️')]").nth(0).is_visible(), "A floating reaction should appear over the video player after reacting to the chat message"
+        await asyncio.sleep(5)
+
+    finally:
+        if context:
+            await context.close()
+        if browser:
+            await browser.close()
+        if pw:
+            await pw.stop()
+
+asyncio.run(run_test())
+    

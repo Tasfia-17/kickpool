@@ -1,0 +1,660 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x"]
+  engineType    = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String              @id @default(cuid())
+  username               String              @unique
+  email                  String?             @unique
+  password               String
+  image                  String?
+  bio                    String?
+  discord                String?
+  instagram              String?
+  twitter                String?
+  birthDate              DateTime?
+  role                   String              @default("USER")
+  isBanned               Boolean             @default(false)
+  banReason              String?
+  watchTime              Int                 @default(0)
+  roomsJoined            Int                 @default(0)
+  emailVerified          Boolean             @default(false)
+  verificationCode       String?
+  verificationExpires    DateTime?
+  isVIP                  Boolean             @default(false)
+  isFounder              Boolean             @default(false)
+  vipNameColor           String?
+  vipFont                String?
+  vipBadge               String?
+  vipGlow                Boolean             @default(false)
+  vipNameEffect          String?
+  vipNameGradient        String?
+  vipProfileBg           String?
+  vipProfileBanner       String?
+  vipProfileAccent       String?
+  vipProfileBorder       String?
+  vipProfileGlow         String?
+  vipBioEffect           String?
+  vipCustomCSS           String?
+  vipCardNameColor       String?
+  vipCardNameGradient    String?
+  vipCardNameGlow        Boolean             @default(false)
+  profileCardStyle       String              @default("classic")
+  idCardStyle            String?
+  idCardCustomHeader     String?
+  idCardCustomBody       String?
+  idCardCustomAccent     String?
+  idCardCustomBorder     String?
+  idCardShowLevel        Boolean             @default(true)
+  idCardShowXp           Boolean             @default(true)
+  idCardShowHologram     Boolean             @default(true)
+  idCardShowScanlines    Boolean             @default(true)
+  profileSceneId         String?
+  profileSceneEffect     String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  currentStreak          Int                 @default(0)
+  lastLoginDate          DateTime?
+  level                  Int                 @default(1)
+  longestStreak          Int                 @default(0)
+  messagesSent           Int                 @default(0)
+  roomsCreated           Int                 @default(0)
+  totalXP                Int                 @default(0)
+  studyStreak            Int                 @default(0)
+  unlockedTitles         String[]            @default([])
+  unlockedBadges         String[]            @default([])
+  unlockedThemes         String[]            @default([])
+  activeTitle            String?
+  activities             Activity[]          @relation("UserActivities")
+  challengeProgress      ChallengeProgress[]
+  crates                 Crate[]
+  watchlist              Watchlist[]
+  dailyQuests            DailyQuest[]
+  receivedDirectMessages DirectMessage[]     @relation("ReceivedDMs")
+  sentDirectMessages     DirectMessage[]     @relation("SentDMs")
+  receivedRequests       FriendRequest[]     @relation("ReceivedRequests")
+  sentRequests           FriendRequest[]     @relation("SentRequests")
+  friendOf               Friendship[]        @relation("FriendOf")
+  friends                Friendship[]        @relation("UserFriends")
+  groupMembers           GroupMember[]
+  messages               Message[]
+  minigameScores         MinigameScore[]
+  notifications          Notification[]
+  passwordResets         PasswordReset[]
+  profilePassportStamps  ProfilePassportStamp[]
+  profileShowcaseSlots   ProfileShowcaseSlot[]
+  hostedRooms            Room[]              @relation("RoomHost")
+  roomPersonas           RoomPersona[]
+  roomVotes              RoomVote[]
+  scheduledRooms         ScheduledRoom[]     @relation("ScheduledRoomHost")
+  favoriteRooms          FavoriteRoom[]
+  studyContracts         StudyContract[]
+  studySessions          StudySession[]
+  studySpace             StudySpace?
+  studyTasks             StudyTask[]
+  createdPools           MatchPool[]         @relation("CreatedPools")
+  poolEntries            PoolEntry[]         @relation("PoolEntries")
+  matchPredictions       MatchPrediction[]   @relation("MatchPredictions")
+}
+
+model StudySpace {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  sceneId            String   @default("lamp-lit-loft")
+  weather            String   @default("rain")
+  timeOfDay          String   @default("dusk")
+  lampMode           String   @default("focus")
+  ambiencePresetId   String   @default("rainy-lofi")
+  musicMode          String   @default("ambient")
+  lofiStationId      String?
+  focusTone          String   @default("brown-noise")
+  rainVolume         Int      @default(42)
+  windVolume         Int      @default(16)
+  thunderVolume      Int      @default(0)
+  birdsVolume        Int      @default(0)
+  focusToneVolume    Int      @default(28)
+  quietMode          Boolean  @default(false)
+  scratchpad         String?
+  parkingLot         String[] @default([])
+  recoveryNudgeCount Int      @default(0)
+  lastLegacyImportAt DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sceneId])
+}
+
+model StudyTask {
+  id          String         @id @default(cuid())
+  userId      String
+  title       String
+  details     String?
+  status      String         @default("BACKLOG")
+  priority    String         @default("MEDIUM")
+  energy      String         @default("STEADY")
+  taskType    String         @default("general")
+  etaMinutes  Int?
+  position    Int            @default(0)
+  isPinned    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  completedAt DateTime?
+  contracts   StudyContract[]
+  sessions    StudySession[]
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, position])
+  @@index([userId, updatedAt])
+}
+
+model StudyContract {
+  id              String         @id @default(cuid())
+  userId          String
+  taskId          String?
+  title           String
+  expectedOutcome String
+  recipeId        String
+  energyMode      String         @default("steady")
+  sessionMinutes  Int
+  status          String         @default("DRAFT")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  startedAt       DateTime?
+  completedAt     DateTime?
+  sessions        StudySession[]
+  task            StudyTask?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, updatedAt])
+  @@index([taskId])
+}
+
+model StudySession {
+  id                  String         @id @default(cuid())
+  userId              String
+  contractId          String?
+  taskId              String?
+  recipeId            String
+  recipeName          String
+  status              String         @default("ACTIVE")
+  energyMode          String         @default("steady")
+  recoveryState       String?
+  sceneId             String?
+  startedAt           DateTime       @default(now())
+  endedAt             DateTime?
+  plannedFocusMinutes Int
+  actualFocusMinutes  Int            @default(0)
+  plannedBreakMinutes Int            @default(0)
+  actualBreakMinutes  Int            @default(0)
+  completedCycles     Int            @default(0)
+  interruptionCount   Int            @default(0)
+  outcome             String?
+  debriefNote         String?
+  contract            StudyContract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  task                StudyTask?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, startedAt])
+  @@index([contractId])
+  @@index([taskId])
+}
+
+model ProfileShowcaseSlot {
+  id        String   @id @default(cuid())
+  userId    String
+  slotIndex Int
+  itemType  String
+  itemRef   String
+  caption   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slotIndex])
+  @@index([userId])
+}
+
+model ProfilePassportStamp {
+  id         String   @id @default(cuid())
+  userId     String
+  roomId     String?
+  stampKey   String
+  stampType  String
+  label      String
+  artVariant String
+  rarity     String
+  earnedAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
+  room       Room?    @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stampKey], name: "userId_stampKey")
+  @@index([userId, earnedAt])
+  @@index([roomId])
+}
+
+model RoomPersona {
+  id            String   @id @default(cuid())
+  userId        String
+  roomId        String
+  displayName   String?
+  badgeEmoji    String?
+  aboutMe       String?
+  sceneId       String?
+  profileEffect String?
+  primaryColor  String?
+  accentColor   String?
+  avatarVariant String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  room          Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+  @@index([userId])
+  @@index([roomId])
+}
+
+model FriendRequest {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+  receiver   User     @relation("ReceivedRequests", fields: [receiverId], references: [id])
+  sender     User     @relation("SentRequests", fields: [senderId], references: [id])
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([status])
+}
+
+model Friendship {
+  id        String   @id @default(cuid())
+  userId    String
+  friendId  String
+  createdAt DateTime @default(now())
+  friend    User     @relation("FriendOf", fields: [friendId], references: [id])
+  user      User     @relation("UserFriends", fields: [userId], references: [id])
+
+  @@unique([userId, friendId])
+  @@index([userId])
+  @@index([friendId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  data      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+model Room {
+  id                   String         @id
+  name                 String?
+  isPublic             Boolean        @default(true)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  currentVideoUrl      String         @default("")
+  currentVideoTitle    String         @default("")
+  currentVideoProvider String         @default("youtube")
+  onlineCount          Int            @default(0)
+  maxUsers             Int            @default(50)
+  hostId               String?
+  coHostIds            String[]       @default([])
+  inviteCode           String?        @unique
+  category             String?
+  groupId              String?
+  isScheduled          Boolean        @default(false)
+  rating               Float?         @default(0)
+  ratingCount          Int            @default(0)
+  scheduledStart       DateTime?
+  tags                 String?
+  templateId           String?
+  messages             Message[]
+  group                Group?         @relation(fields: [groupId], references: [id])
+  host                 User?          @relation("RoomHost", fields: [hostId], references: [id])
+  personas             RoomPersona[]
+  profilePassportStamps ProfilePassportStamp[]
+  queueVotes           RoomVote[]
+  scheduledRoom        ScheduledRoom?
+
+  @@index([isPublic, createdAt])
+  @@index([hostId])
+  @@index([onlineCount, updatedAt])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+  username  String
+  userId    String?
+  roomId    String
+  reactions String?
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model DirectMessage {
+  id         String   @id @default(cuid())
+  text       String
+  createdAt  DateTime @default(now())
+  senderId   String
+  receiverId String
+  read       Boolean  @default(false)
+  receiver   User     @relation("ReceivedDMs", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender     User     @relation("SentDMs", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
+
+model FavoriteRoom {
+  id        String   @id @default(cuid())
+  userId    String
+  roomId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
+  @@index([userId])
+}
+
+model WatchHistory {
+  id         String   @id @default(cuid())
+  userId     String
+  roomId     String
+  videoUrl   String
+  videoTitle String
+  watchedAt  DateTime @default(now())
+  duration   Int      @default(0)
+
+  @@index([userId])
+  @@index([watchedAt])
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  data      String?
+  createdAt DateTime @default(now())
+  user      User     @relation("UserActivities", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([type])
+}
+
+model ScheduledRoom {
+  id          String   @id @default(cuid())
+  roomId      String   @unique
+  hostId      String
+  scheduledAt DateTime
+  title       String?
+  description String?
+  rsvps       Int      @default(0)
+  createdAt   DateTime @default(now())
+  host        User     @relation("ScheduledRoomHost", fields: [hostId], references: [id])
+  room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([scheduledAt])
+  @@index([hostId])
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  icon        String?
+  createdAt   DateTime      @default(now())
+  members     GroupMember[]
+  rooms       Room[]
+
+  @@index([name])
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  userId   String
+  groupId  String
+  role     String   @default("MEMBER")
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+model RoomVote {
+  id         String   @id @default(cuid())
+  roomId     String
+  userId     String
+  videoUrl   String
+  videoTitle String
+  votes      Int      @default(1)
+  createdAt  DateTime @default(now())
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId, videoUrl])
+  @@index([roomId])
+  @@index([userId])
+}
+
+model DailyQuest {
+  id        String   @id @default(cuid())
+  userId    String
+  questType String
+  progress  Int      @default(0)
+  target    Int
+  completed Boolean  @default(false)
+  date      DateTime @default(now())
+  xpReward  Int      @default(50)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questType, date])
+  @@index([userId])
+  @@index([date])
+}
+
+model ChallengeProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  challengeId String
+  progress    Int       @default(0)
+  target      Int
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@index([userId])
+  @@index([challengeId])
+}
+
+model Crate {
+  id        String        @id @default(cuid())
+  userId    String
+  crateType String
+  opened    Boolean       @default(false)
+  openedAt  DateTime?
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rewards   CrateReward[]
+
+  @@index([userId])
+  @@index([opened])
+  @@index([crateType])
+}
+
+model CrateReward {
+  id          String   @id @default(cuid())
+  crateId     String
+  rewardType  String
+  rewardValue String
+  amount      Int?
+  createdAt   DateTime @default(now())
+  crate       Crate    @relation(fields: [crateId], references: [id], onDelete: Cascade)
+
+  @@index([crateId])
+}
+
+model MinigameScore {
+  id        String   @id @default(cuid())
+  userId    String
+  gameType  String
+  score     Int
+  level     Int?
+  time      Int?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([gameType])
+  @@index([score])
+  @@index([createdAt])
+}
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  userId    String
+  tmdbId    Int
+  tmdbType  String
+  title     String
+  poster    String?
+  year      String?
+  addedAt   DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tmdbId, tmdbType])
+  @@index([userId])
+  @@index([tmdbType])
+}
+
+// ══════════════════════════════════════════════
+// KICKPOOL — World Cup Sweepstakes
+// ══════════════════════════════════════════════
+
+model MatchPool {
+  id              String       @id @default(cuid())
+  fixtureId       Int          /// TxLINE fixture ID
+  name            String       /// e.g. "Spain vs Argentina Final"
+  participant1    String
+  participant2    String
+  startTime       DateTime
+  status          String       @default("PENDING") // PENDING | LIVE | SETTLED | CANCELLED
+  entryFee        Float        @default(0)         // USDC entry fee per participant
+  maxParticipants Int          @default(20)
+  inviteCode      String       @unique @default(cuid())
+  creatorId       String
+  winnerUserId    String?
+  settlementTxSig String?      /// Solana tx signature for settlement proof
+  merkleProof     String?      /// Serialized TxLINE Merkle proof JSON
+  finalScore1     Int?
+  finalScore2     Int?
+  prizePool       Float        @default(0)         // total USDC in pool
+  platformFee     Float        @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  creator         User         @relation("CreatedPools", fields: [creatorId], references: [id])
+  entries         PoolEntry[]
+  predictions     MatchPrediction[]
+  commentary      AICommentary[]
+
+  @@index([fixtureId])
+  @@index([status])
+  @@index([creatorId])
+  @@index([inviteCode])
+}
+
+model PoolEntry {
+  id              String    @id @default(cuid())
+  poolId          String
+  userId          String
+  walletAddress   String
+  entryFeePaid    Float     @default(0)
+  predictedWinner String?   // "participant1" | "participant2" | "draw"
+  predictedScore1 Int?
+  predictedScore2 Int?
+  finalScore      Float?    // calculated points after settlement
+  rank            Int?
+  prizeWon        Float     @default(0)
+  payoutTxSig     String?
+  joinedAt        DateTime  @default(now())
+  pool            MatchPool @relation(fields: [poolId], references: [id], onDelete: Cascade)
+  user            User      @relation("PoolEntries", fields: [userId], references: [id])
+
+  @@unique([poolId, userId])
+  @@index([poolId])
+  @@index([userId])
+}
+
+model MatchPrediction {
+  id         String    @id @default(cuid())
+  poolId     String
+  userId     String
+  eventType  String    // "next_goal" | "next_corner" | "next_card" | "hilo_shots"
+  prediction String    // the user's answer
+  isCorrect  Boolean?
+  pointsWon  Int       @default(0)
+  createdAt  DateTime  @default(now())
+  pool       MatchPool @relation(fields: [poolId], references: [id], onDelete: Cascade)
+  user       User      @relation("MatchPredictions", fields: [userId], references: [id])
+
+  @@index([poolId])
+  @@index([userId])
+}
+
+model AICommentary {
+  id          String    @id @default(cuid())
+  poolId      String
+  eventType   String    // "goal" | "card" | "var" | "odds_shift" | "halftime" | "fulltime"
+  eventData   String    // JSON snapshot of TxLINE event
+  commentary  String    // AI-generated text
+  oddsContext String?   // serialized odds at moment of event
+  createdAt   DateTime  @default(now())
+  pool        MatchPool @relation(fields: [poolId], references: [id], onDelete: Cascade)
+
+  @@index([poolId])
+  @@index([createdAt])
+}

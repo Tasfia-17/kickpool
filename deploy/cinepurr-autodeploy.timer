@@ -1,0 +1,10 @@
+[Unit]
+Description=Check CinePurr main for deployable updates
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1min
+Unit=cinepurr-autodeploy.service
+
+[Install]
+WantedBy=timers.target

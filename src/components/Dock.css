@@ -1,0 +1,335 @@
+.dock-outer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  max-width: 100%;
+  align-items: flex-end;
+  padding-bottom: 0.5rem;
+  z-index: 9998;
+  overflow: visible;
+}
+
+.dock-panel {
+  position: relative;
+  width: fit-content;
+  min-width: fit-content;
+  max-width: calc(100vw - 1rem);
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(
+    180deg,
+    #6b4a22 0%, #7a5530 3%, #6b4a22 5%,
+    #7a5530 8%, #6b4a22 12%, #8b6638 15%,
+    #6b4a22 20%, #7a5530 25%, #6b4a22 30%,
+    #7a5530 35%, #8b6638 40%, #6b4a22 45%,
+    #7a5530 50%, #6b4a22 55%, #8b6638 60%,
+    #6b4a22 65%, #7a5530 70%, #6b4a22 75%,
+    #7a5530 80%, #6b4a22 85%, #8b6638 90%,
+    #6b4a22 95%, #7a5530 100%
+  );
+  border: 2px solid #5c3d1a;
+  border-bottom: none;
+  padding: 0.5rem 0.75rem;
+  box-shadow: 0 -4px 12px rgba(92,61,26,0.3);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+}
+
+/* Themed dock panel — uses CSS var --dock-theme */
+.dock-panel.themed {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--dock-theme) 70%, #000) 0%,
+    color-mix(in srgb, var(--dock-theme) 55%, #000) 3%,
+    color-mix(in srgb, var(--dock-theme) 70%, #000) 5%,
+    color-mix(in srgb, var(--dock-theme) 55%, #000) 15%,
+    color-mix(in srgb, var(--dock-theme) 70%, #000) 30%,
+    color-mix(in srgb, var(--dock-theme) 55%, #000) 50%,
+    color-mix(in srgb, var(--dock-theme) 70%, #000) 70%,
+    color-mix(in srgb, var(--dock-theme) 55%, #000) 85%,
+    color-mix(in srgb, var(--dock-theme) 70%, #000) 100%
+  );
+  border-color: color-mix(in srgb, var(--dock-theme) 50%, #000);
+  box-shadow: 0 -4px 16px color-mix(in srgb, var(--dock-theme) 30%, transparent);
+}
+
+.dock-panel.themed.dark-mode {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--dock-theme) 40%, #000) 0%,
+    color-mix(in srgb, var(--dock-theme) 30%, #000) 3%,
+    color-mix(in srgb, var(--dock-theme) 40%, #000) 5%,
+    color-mix(in srgb, var(--dock-theme) 30%, #000) 15%,
+    color-mix(in srgb, var(--dock-theme) 40%, #000) 30%,
+    color-mix(in srgb, var(--dock-theme) 30%, #000) 50%,
+    color-mix(in srgb, var(--dock-theme) 40%, #000) 70%,
+    color-mix(in srgb, var(--dock-theme) 30%, #000) 85%,
+    color-mix(in srgb, var(--dock-theme) 40%, #000) 100%
+  );
+  border-color: color-mix(in srgb, var(--dock-theme) 35%, #000);
+  box-shadow: 0 -4px 16px color-mix(in srgb, var(--dock-theme) 20%, transparent);
+}
+
+.dock-panel.themed .dock-item {
+  border-color: color-mix(in srgb, var(--dock-theme) 40%, #ccc);
+}
+
+.dock-panel.themed.dark-mode .dock-item {
+  border-color: color-mix(in srgb, var(--dock-theme) 50%, #333);
+}
+
+.dock-panel.themed .dock-label {
+  border-color: color-mix(in srgb, var(--dock-theme) 40%, #ccc);
+  background-color: color-mix(in srgb, var(--dock-theme) 10%, #fff);
+  color: color-mix(in srgb, var(--dock-theme) 80%, #000);
+}
+
+.dock-panel.themed.dark-mode .dock-label {
+  border-color: color-mix(in srgb, var(--dock-theme) 50%, #333);
+  background-color: color-mix(in srgb, var(--dock-theme) 20%, #111);
+  color: color-mix(in srgb, var(--dock-theme) 30%, #eee);
+}
+
+.dock-panel-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center; /* Center items horizontally */
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  width: fit-content;
+  padding-top: 2.5rem; /* Space for labels */
+  margin: 0 auto; /* Center the inner container */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Hide scrollbar for Chrome, Safari, Opera */
+.dock-panel::-webkit-scrollbar,
+.dock-panel-inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mobile: Make dock horizontally scrollable with improved UX */
+@media (max-width: 640px) {
+  .dock-outer {
+    left: 0;
+    right: 0;
+    transform: none;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    /* Add safe area for iOS home indicator */
+    padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+    height: auto !important;
+  }
+
+  .dock-panel {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: scroll !important;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x !important;
+    justify-content: flex-start;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    box-shadow: 0 -4px 12px rgba(92,61,26,0.2);
+    padding: 0.5rem 0;
+    /* Scroll snapping for better UX */
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0.5rem;
+  }
+
+  .dock-panel.dark-mode {
+    box-shadow: 0 -4px 12px rgba(40,25,5,0.4);
+  }
+
+  .dock-panel-inner {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    justify-content: flex-start;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    touch-action: pan-x !important;
+    gap: 0.625rem;
+    padding-top: 0.5rem; /* Reduced space for labels on mobile */
+    overflow: visible;
+  }
+
+  .dock-item {
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    scroll-snap-align: center;
+    /* Larger touch targets on mobile */
+    min-width: 44px !important;
+    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  /* Hide labels on mobile by default */
+  .dock-label {
+    display: none;
+  }
+
+  /* Show scroll indicators on mobile - left side */
+  .dock-panel::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(to left, transparent, rgba(107, 74, 34, 0.9));
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Show scroll indicators on mobile - right side */
+  .dock-panel::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: linear-gradient(to right, transparent, rgba(107, 74, 34, 0.9));
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .dock-panel.dark-mode::before {
+    background: linear-gradient(to left, transparent, rgba(61, 46, 10, 0.9));
+  }
+
+  .dock-panel.dark-mode::after {
+    background: linear-gradient(to right, transparent, rgba(61, 46, 10, 0.9));
+  }
+
+  .dock-panel.themed::before {
+    background: linear-gradient(to left, transparent, var(--dock-theme));
+    filter: brightness(0.7);
+  }
+
+  .dock-panel.themed::after {
+    background: linear-gradient(to right, transparent, var(--dock-theme));
+    filter: brightness(0.7);
+  }
+
+  /* Active/pressed state for mobile */
+  .dock-item:active {
+    transform: scale(0.92);
+    box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
+  }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 380px) {
+  .dock-panel-inner {
+    gap: 0.375rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .dock-item {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+.dock-panel.dark-mode {
+  background: linear-gradient(
+    180deg,
+    #3d2e0a 0%, #4a380f 3%, #3d2e0a 5%,
+    #4a380f 8%, #3d2e0a 12%, #4a380f 15%,
+    #3d2e0a 20%, #4a380f 25%, #3d2e0a 30%,
+    #4a380f 35%, #3d2e0a 40%, #3d2e0a 45%,
+    #4a380f 50%, #3d2e0a 55%, #4a380f 60%,
+    #3d2e0a 65%, #4a380f 70%, #3d2e0a 75%,
+    #4a380f 80%, #3d2e0a 85%, #4a380f 90%,
+    #3d2e0a 95%, #4a380f 100%
+  );
+  border-color: #4a380f;
+  box-shadow: 0 -4px 12px rgba(40,25,5,0.5);
+}
+
+.dock-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #faf5ed;
+  border: 2px solid #c4a97d;
+  box-shadow: 2px 2px 4px rgba(92,61,26,0.2);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+  overflow: visible;
+}
+
+.dock-panel.dark-mode .dock-item {
+  background-color: #2a2318;
+  border-color: #5c3d1a;
+  box-shadow: 2px 2px 4px rgba(40,25,5,0.3);
+}
+
+.dock-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 8px rgba(92,61,26,0.25);
+}
+
+.dock-panel.dark-mode .dock-item:hover {
+  box-shadow: 3px 3px 8px rgba(40,25,5,0.4);
+}
+
+.dock-item:active {
+  transform: translateY(0px) translateX(1px) translateY(1px);
+  box-shadow: 1px 1px 2px rgba(92,61,26,0.2);
+}
+
+.dock-panel.dark-mode .dock-item:active {
+  box-shadow: 1px 1px 2px rgba(40,25,5,0.3);
+}
+
+.dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dock-label {
+  position: absolute;
+  top: -2.5rem;
+  left: 50%;
+  width: fit-content;
+  white-space: pre;
+  border-radius: 6px;
+  border: 2px solid #c4a97d;
+  background-color: #fdf8f0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  font-family: 'Lora', serif;
+  color: #5c3d1a;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 2px 2px 6px rgba(92,61,26,0.15);
+  z-index: 10000;
+}
+
+.dock-panel.dark-mode .dock-label {
+  background-color: #2a2318;
+  border-color: #5c3d1a;
+  color: #e8dcc8;
+  box-shadow: 2px 2px 6px rgba(40,25,5,0.3);
+}
