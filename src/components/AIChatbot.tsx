@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
-import { usePokemonTheme } from '@/components/PokemonThemeProvider';
+
 import { motion, AnimatePresence } from 'motion/react';
-import PixelCatMascot from '@/components/PixelCatMascot';
+
 import { MessageCircle, X, Send, Sparkles, ChevronDown, ChevronRight, ChevronLeft } from 'lucide-react';
 import './AIChatbot.css';
 
@@ -46,7 +46,8 @@ function formatMessage(text: string): React.ReactNode[] {
 }
 
 function AIChatbot() {
-    const { currentTheme, isDarkMode } = usePokemonTheme();
+    // KickPool always uses dark mode
+    const isDarkMode = true;
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([WELCOME_MESSAGE]);
     const [inputValue, setInputValue] = useState('');
@@ -184,8 +185,8 @@ function AIChatbot() {
         }
     };
 
-    const primaryColor = currentTheme.colors.primary;
-    const darkBg = currentTheme.colors.darkBackground;
+    const primaryColor = '#7c3aed';
+    const darkBg = '#0f0f1a';
 
     if (isMinimized === 'left') {
         return (
@@ -285,7 +286,7 @@ function AIChatbot() {
                                                         backgroundColor: primaryColor + '20',
                                                     }}
                                                 >
-                                                    <PixelCatMascot size={24} variant="happy" animate={false} />
+                                                    <span className="text-lg" aria-hidden="true">⚽</span>
                                                 </div>
                                             </div>
                                         )}
@@ -345,7 +346,7 @@ function AIChatbot() {
                                                     backgroundColor: primaryColor + '20',
                                                 }}
                                             >
-                                                <PixelCatMascot size={24} variant="default" animate={true} />
+                                                <span className="text-lg animate-bounce" aria-hidden="true">⚽</span>
                                             </div>
                                         </div>
                                         <div
@@ -421,7 +422,7 @@ function AIChatbot() {
                         <ChevronDown size={24} className={isDarkMode ? 'text-white' : 'text-black'} />
                     ) : (
                         <div className="flex items-center justify-center">
-                            <PixelCatMascot size={32} variant="wink" animate={false} />
+                            <span className="text-2xl" aria-hidden="true">⚽</span>
                         </div>
                     )}
 

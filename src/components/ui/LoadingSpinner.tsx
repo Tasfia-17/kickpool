@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'motion/react';
-import PixelIcon from '@/components/PixelIcon';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -16,10 +15,10 @@ export function LoadingSpinner({ size = 'md', text, className = '' }: LoadingSpi
     lg: 'w-16 h-16',
   };
 
-  const iconSizes = {
-    sm: 12,
-    md: 16,
-    lg: 24,
+  const emojiSizes = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-xl',
   };
 
   return (
@@ -33,18 +32,19 @@ export function LoadingSpinner({ size = 'md', text, className = '' }: LoadingSpi
         />
         {/* Inner spinning ring */}
         <motion.div
-          className="absolute inset-0 rounded-full border-4 border-transparent border-t-pink-500"
+          className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500"
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
         />
-        {/* Pixel cat center */}
+        {/* Football center */}
         <div className="absolute inset-0 flex items-center justify-center">
           <motion.span
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            style={{ color: '#ff69b4' }}
+            className={emojiSizes[size]}
+            aria-hidden="true"
           >
-            <PixelIcon name="cat" size={iconSizes[size]} />
+            ⚽
           </motion.span>
         </div>
       </div>
@@ -81,24 +81,24 @@ export function LoadingDots({ className = '' }: { className?: string }) {
   );
 }
 
-// Pulsing cat loader
+// Football loader (replaces CatLoader)
 export function CatLoader({ message = 'Loading...' }: { message?: string }) {
   return (
     <div className="flex flex-col items-center justify-center p-8">
       <motion.div
         animate={{
           scale: [1, 1.1, 1],
-          rotate: [0, 5, -5, 0],
+          rotate: [0, 15, -15, 0],
         }}
         transition={{
           duration: 2,
           repeat: Infinity,
           ease: 'easeInOut',
         }}
-        className="mb-4"
-        style={{ color: '#ff69b4' }}
+        className="mb-4 text-5xl select-none"
+        aria-hidden="true"
       >
-        <PixelIcon name="cat" size={64} />
+        ⚽
       </motion.div>
       <motion.div
         initial={{ opacity: 0 }}
@@ -118,7 +118,7 @@ export function ProgressLoader({ progress = 0 }: { progress: number }) {
     <div className="w-full max-w-xs">
       <div className="h-2 bg-purple-900/50 rounded-full overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-pink-500 to-purple-500"
+          className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.3 }}

@@ -3,8 +3,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { usePokemonTheme } from '@/components/PokemonThemeProvider';
-import Logo from '@/components/Logo';
 import { AlertCircle, CheckCircle, Mail, User, Lock, Calendar, Eye, EyeOff, Check, X } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { motion, AnimatePresence } from 'motion/react';
@@ -57,7 +55,7 @@ export default function RegisterPage() {
   const [emailFailed, setEmailFailed] = useState(false);
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
   const router = useRouter();
-  const { currentTheme, isDarkMode, pokemonSprite } = usePokemonTheme();
+  // KickPool uses dark theme only
   const { t } = useI18n();
 
   // Keep registration throttling permissive so automation retries don't get blocked.
@@ -343,41 +341,33 @@ export default function RegisterPage() {
   return (
     <main
       className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden transition-colors duration-500"
-      style={{ backgroundColor: isDarkMode ? 'transparent' : currentTheme.colors.background }}
+      className="bg-gray-950"
     >
       {/* Animated Gradient Background */}
       <div className="absolute inset-0 animated-gradient-bg-slow opacity-50" />
 
       {/* Floating Mascot Decorations */}
-      <motion.div
-        className="absolute top-10 right-10 w-16 h-16 opacity-60 pointer-events-none"
-        animate={{ y: [0, -15, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <img src={pokemonSprite} alt="" width={64} height={64} className="w-full h-full" aria-hidden="true" />
-      </motion.div>
-      <div className="absolute bottom-10 left-10 w-16 h-16 animate-float opacity-60 pointer-events-none" style={{ animationDelay: '1s' }}>
-        <img src={pokemonSprite} alt="" width={64} height={64} className="w-full h-full" aria-hidden="true" />
-      </div>
-      <div className="absolute bottom-20 right-16 w-12 h-12 animate-bounce-subtle opacity-40 pointer-events-none">
-        <img src={pokemonSprite} alt="" width={48} height={48} className="w-full h-full" aria-hidden="true" />
-      </div>
+      <motion.div className="absolute top-10 right-10 opacity-40 pointer-events-none select-none text-5xl" animate={{ y: [0, -15, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>⚽</motion.div>
+      <motion.div className="absolute bottom-10 left-10 opacity-40 pointer-events-none select-none text-5xl" animate={{ y: [0, -15, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}>🏆</motion.div>
+      <motion.div className="absolute top-20 left-20 opacity-30 pointer-events-none select-none text-4xl hidden sm:block" animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 4, repeat: Infinity }}>🎯</motion.div>
 
-      <div className="w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 relative z-10">
+      <div className="w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-8 relative z-10">
         {step === 'register' ? (
           <>
             <div className="flex justify-center mb-4">
-              <Logo size="lg" />
+              <div className="flex justify-center">
+                <span className="text-3xl mr-2" aria-hidden="true">⚽</span>
+                <span className="font-black text-white text-2xl">KickPool</span>
+              </div>
             </div>
             <h1
-              className="text-4xl font-bold mb-6 text-center drop-shadow-[2px_2px_0_#000] transition-colors"
-              style={{ color: currentTheme.colors.primary, textShadow: '1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}
+              className="text-3xl font-black mb-6 text-center text-white"}
             >
               {t('createAccount')}
             </h1>
 
             {error && (
-              <div className="mb-4 p-3 bg-[#fff0f5] border-2 border-red-500 text-red-500 font-bold text-sm text-center shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] flex items-center justify-center gap-2">
+              <div className="mb-4 p-3 bg-red-950/60 border border-red-800 text-red-400 font-semibold text-sm text-center rounded-xl flex items-center justify-center gap-2">
                 <AlertCircle size={20} /> {error}
               </div>
             )}
@@ -391,7 +381,7 @@ export default function RegisterPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-white border-4 border-black p-3 text-black focus:outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-mono"
+                  className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none transition-colors"
                   required
                   disabled={isLoading}
                   minLength={3}
@@ -408,7 +398,7 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white border-4 border-black p-3 text-black focus:outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-mono"
+                  className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none transition-colors"
                   required
                   disabled={isLoading}
                   placeholder="your@email.com"
@@ -499,7 +489,7 @@ export default function RegisterPage() {
                   type="text"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full bg-white border-4 border-black p-3 text-black focus:outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-mono"
+                  className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none transition-colors"
                   disabled={isLoading}
                   aria-label="Birth date"
                   placeholder="YYYY-MM-DD (optional)"
@@ -512,7 +502,7 @@ export default function RegisterPage() {
                 type="submit"
                 disabled={isLoading}
                 className="w-full text-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all font-bold py-3 text-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                style={{ backgroundColor: currentTheme.colors.primary }}
+                
               >
                 {isLoading ? (
                   <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
@@ -526,7 +516,7 @@ export default function RegisterPage() {
           <>
             <h2
               className="text-3xl font-bold mb-2 text-center drop-shadow-[2px_2px_0_#000] transition-colors"
-              style={{ color: currentTheme.colors.primary }}
+              className="text-purple-400 hover:text-purple-300"
             >
               {t('verifyEmail')}
             </h2>
@@ -547,7 +537,7 @@ export default function RegisterPage() {
             )}
 
             {error && (
-              <div className="mb-4 p-3 bg-[#fff0f5] border-2 border-red-500 text-red-500 font-bold text-sm text-center shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] flex items-center justify-center gap-2">
+              <div className="mb-4 p-3 bg-red-950/60 border border-red-800 text-red-400 font-semibold text-sm text-center rounded-xl flex items-center justify-center gap-2">
                 <AlertCircle size={20} /> {error}
               </div>
             )}
@@ -569,7 +559,7 @@ export default function RegisterPage() {
                     value={digit}
                     onChange={(e) => handleCodeChange(index, e.target.value)}
                     onKeyDown={(e) => handleCodeKeyDown(index, e)}
-                    className="w-14 h-16 text-center text-2xl font-bold bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:border-pink-500"
+                    className="w-14 h-16 text-center text-2xl font-bold bg-gray-800 border-2 border-gray-700 focus:border-purple-500 rounded-xl text-white focus:outline-none transition-colors"
                     maxLength={1}
                     disabled={isLoading}
                   />
@@ -580,7 +570,7 @@ export default function RegisterPage() {
                 type="submit"
                 disabled={isLoading}
                 className="w-full text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all font-bold py-3 text-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                style={{ backgroundColor: currentTheme.colors.primary }}
+                
               >
                 {isLoading ? (
                   <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
@@ -595,7 +585,7 @@ export default function RegisterPage() {
                   onClick={handleResend}
                   disabled={resendCooldown > 0 || isLoading}
                   className="text-sm font-bold disabled:text-gray-400 transition-colors hover:underline"
-                  style={{ color: resendCooldown > 0 ? undefined : currentTheme.colors.primary }}
+                  className={resendCooldown > 0 ? "text-gray-500" : "text-purple-400 hover:text-purple-300"}
                 >
                   {resendCooldown > 0
                     ? `Resend code in ${resendCooldown}s`

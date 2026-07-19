@@ -89,7 +89,7 @@ const translations = {
     sendMessage: 'Send a message...',
     viewers: 'viewers',
     nowPlaying: 'Now Playing',
-    pasteLink: 'Paste a YouTube or Piped link...',
+    pasteLink: 'Paste a match link or stream URL...',
     play: 'Play',
     // Navigation
     home: 'Home',
@@ -133,8 +133,8 @@ const translations = {
     // Main page
     statusOnline: 'STATUS: ONLINE',
     servers: 'SERVERS',
-    catFact: 'CAT FACT!',
-    clickForMoreCatFacts: 'Click for more cat facts!',
+    catFact: 'FOOTBALL FACT!',
+    clickForMoreCatFacts: 'Click for more football facts!',
     pokemonFact: 'POKÉMON FACT!',
     clickForMorePokemonFacts: 'Click for more Pokémon facts!',
     tapForMore: 'Tap for more!',
@@ -155,8 +155,8 @@ const translations = {
     studyRoom: 'Study Room',
     // Other
     allRightsReserved: 'All rights reserved.',
-    catSpritesBy: 'Cat sprites by',
-    pokemonSpritesBy: 'Pokémon sprites via',
+    catSpritesBy: 'Football data by',
+    pokemonSpritesBy: 'Match data via',
     tapToViewProfile: 'Tap to view profile',
     study: 'Study',
     // Mobile home
@@ -174,7 +174,7 @@ const translations = {
     noRoomsAvailable: 'No rooms available',
     createToGetStarted: 'Create one to get started!',
     unnamedRoom: 'Unnamed Room',
-    noVideoPlaying: 'No video playing',
+    noVideoPlaying: 'No match live',
     more: 'More',
     adminPanel: 'Admin Panel',
     virtualPet: 'Virtual Pet',
@@ -190,10 +190,10 @@ const translations = {
     topPlayers: 'Top players',
     recentEvents: 'Recent events',
     focusPomodoro: 'Focus & Pomodoro',
-    watchHistory: 'Watch History',
-    myWatchlist: 'My Watchlist',
-    viewWatchHistory: 'Your watch history',
-    trackWantToWatch: 'Track want-to-watch',
+    watchHistory: 'Match History',
+    myWatchlist: 'My Pools',
+    viewWatchHistory: 'Your match history',
+    trackWantToWatch: 'Track your pools',
   },
   tr: {
     save: 'Değişiklikleri Kaydet',
@@ -278,7 +278,7 @@ const translations = {
     sendMessage: 'Bir mesaj yaz...',
     viewers: 'izleyici',
     nowPlaying: 'Şimdi Oynatılıyor',
-    pasteLink: 'YouTube veya Piped bağlantısı yapıştır...',
+    pasteLink: 'Maç linki yapıştır...',
     play: 'Oynat',
     // Navigation
     home: 'Ana Sayfa',
@@ -322,8 +322,8 @@ const translations = {
     // Main page
     statusOnline: 'DURUM: ÇEVRİMİÇİ',
     servers: 'SUNUCULAR',
-    catFact: 'KEDİ GERÇEĞİ!',
-    clickForMoreCatFacts: 'Daha fazla kedi gerçeği için tıklayın!',
+    catFact: 'FUTBOL GERÇEĞİ!',
+    clickForMoreCatFacts: 'Daha fazla futbol gerçeği için tıklayın!',
     pokemonFact: 'POKÉMON GERÇEĞİ!',
     clickForMorePokemonFacts: 'Daha fazla Pokémon gerçeği için tıklayın!',
     tapForMore: 'Daha fazlası için dokunun!',
@@ -344,8 +344,8 @@ const translations = {
     studyRoom: 'Çalışma Odası',
     // Other
     allRightsReserved: 'Tüm hakları saklıdır.',
-    catSpritesBy: 'Kedi sprite\'ları',
-    pokemonSpritesBy: 'Pokémon sprite\'ları',
+    catSpritesBy: 'Futbol verileri',
+    pokemonSpritesBy: 'Maç verileri',
     tapToViewProfile: 'Profili görüntülemek için dokun',
     study: 'Çalışma',
     // Mobile home
@@ -379,10 +379,10 @@ const translations = {
     topPlayers: 'En iyi oyuncular',
     recentEvents: 'Son olaylar',
     focusPomodoro: 'Odaklanma & Pomodoro',
-    watchHistory: 'İzleme Geçmişi',
-    myWatchlist: 'İzleme Listem',
-    viewWatchHistory: 'İzleme geçmişiniz',
-    trackWantToWatch: 'İzlemek istediklerini takip et',
+    watchHistory: 'Maç Geçmişi',
+    myWatchlist: 'Havuzlarım',
+    viewWatchHistory: 'Maç geçmişiniz',
+    trackWantToWatch: 'Havuzlarını takip et',
   }
 };
 

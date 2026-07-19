@@ -2,7 +2,6 @@
 
 import { WifiOff, RefreshCw } from 'lucide-react';
 import { motion } from 'motion/react';
-import PixelIcon from '@/components/PixelIcon';
 
 export default function OfflinePage() {
   return (
@@ -26,15 +25,15 @@ export default function OfflinePage() {
           </div>
         </motion.div>
 
-        {/* Sad Cat */}
+        {/* Football emoji */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-6"
-          style={{ color: '#a855f7' }}
+          className="mb-6 text-6xl select-none"
+          aria-hidden="true"
         >
-          <PixelIcon name="cat" size={64} />
+          😔⚽
         </motion.div>
 
         <motion.h1
@@ -52,7 +51,7 @@ export default function OfflinePage() {
           transition={{ delay: 0.4 }}
           className="text-gray-400 mb-8"
         >
-          KickPool needs an internet connection to watch videos together. 
+          KickPool needs an internet connection to stream live matches and pool results.
           Check your connection and try again!
         </motion.p>
 

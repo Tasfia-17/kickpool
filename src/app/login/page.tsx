@@ -4,10 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { usePokemonTheme } from '@/components/PokemonThemeProvider';
-import Logo from '@/components/Logo';
 import { AlertCircle, Eye, EyeOff, User, Lock, Check } from 'lucide-react';
-import PixelIcon from '@/components/PixelIcon';
 import { useI18n } from '@/lib/i18n';
 import { motion, AnimatePresence } from 'motion/react';
 import { useFormRateLimit } from '@/hooks/useFormRateLimit';
@@ -30,7 +27,6 @@ export default function LoginPage() {
   const [shakeError, setShakeError] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
-  const { currentTheme, isDarkMode } = usePokemonTheme();
   const { t } = useI18n();
 
   // Keep client-side throttling permissive so automation retries don't get blocked.
@@ -122,86 +118,73 @@ export default function LoginPage() {
   };
 
   return (
-    <main
-      className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden transition-colors duration-500"
-      style={{ backgroundColor: isDarkMode ? 'transparent' : currentTheme.colors.background }}
-    >
-      {/* Animated Gradient Background */}
-      <div className="absolute inset-0 animated-gradient-bg-slow opacity-50" />
+    <main className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden bg-gray-950">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-gray-950 to-gray-950 pointer-events-none" />
 
-      {/* Floating Pixel Cat Decorations */}
+      {/* Floating football decorations */}
       <motion.div
-        className="absolute top-10 left-10 opacity-60 pointer-events-none select-none"
-        style={{ color: '#ff69b4' }}
-        animate={{ y: [0, -15, 0] }}
+        className="absolute top-10 left-10 opacity-40 pointer-events-none select-none text-5xl"
+        animate={{ y: [0, -15, 0], rotate: [0, 15, -15, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <PixelIcon name="cat" size={48} />
-      </motion.div>
+      >⚽</motion.div>
       <motion.div
-        className="absolute bottom-10 right-10 opacity-60 pointer-events-none select-none"
-        style={{ color: '#feca57' }}
+        className="absolute bottom-10 right-10 opacity-40 pointer-events-none select-none text-5xl"
         animate={{ y: [0, -15, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      >
-        <PixelIcon name="catHappy" size={48} />
-      </motion.div>
+      >🏆</motion.div>
       <motion.div
-        className="absolute top-20 right-20 opacity-40 pointer-events-none select-none"
-        style={{ color: '#ff69b4' }}
+        className="absolute top-20 right-20 opacity-30 pointer-events-none select-none text-4xl"
         animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <PixelIcon name="paw" size={36} />
-      </motion.div>
+      >🎯</motion.div>
       <motion.div
-        className="absolute bottom-20 left-20 opacity-40 pointer-events-none select-none hidden sm:block"
-        style={{ color: '#a855f7' }}
-        animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+        className="absolute bottom-20 left-20 opacity-30 pointer-events-none select-none text-3xl hidden sm:block"
+        animate={{ y: [0, -10, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <PixelIcon name="heart" size={32} />
-      </motion.div>
+      >⚡</motion.div>
 
       <motion.div
-        className={`w-full max-w-md bg-white dark:bg-gray-900 border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.3)] p-6 sm:p-8 relative z-10 ${shakeError ? 'animate-shake' : ''}`}
+        className={`w-full max-w-md bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-6 sm:p-8 relative z-10 ${shakeError ? 'animate-shake' : ''}`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex justify-center mb-4">
-          <Logo size="lg" />
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-3xl">⚽</span>
+            <span className="font-black text-white text-2xl">KickPool</span>
+          </Link>
         </div>
-        <h1
-          className="text-3xl sm:text-4xl font-bold mb-6 text-center drop-shadow-[2px_2px_0_#000] transition-colors"
-          style={{ color: currentTheme.colors.primary }}
-        >
-          {t('welcomeBack')}
+
+        <h1 className="text-2xl font-black mb-6 text-center text-white">
+          Welcome Back 👋
         </h1>
 
-        {/* Error Message with Animation */}
+        {/* Error Message */}
         <AnimatePresence>
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: -10, height: 0 }}
-              className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border-2 border-red-500 text-red-500 font-bold text-sm text-center shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] flex items-center justify-center gap-2 rounded-lg"
+              className="mb-4 p-3 bg-red-950/60 border border-red-800 text-red-400 font-semibold text-sm text-center rounded-xl flex items-center justify-center gap-2"
             >
-              <AlertCircle size={20} className="shrink-0" /> {error}
+              <AlertCircle size={16} className="shrink-0" /> {error}
             </motion.div>
           )}
         </AnimatePresence>
 
-        <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-          {/* Username Field */}
-          <div className="form-group">
-            <label className="form-label text-black dark:text-white">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-1.5">
               Username or email
             </label>
-            <div className={`relative transition-all duration-200 ${focusedField === 'username' ? 'scale-[1.02]' : ''}`}>
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <User size={20} />
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                <User size={18} />
               </div>
               <input
                 type="text"
@@ -209,7 +192,7 @@ export default function LoginPage() {
                 onChange={(e) => setUsername(e.target.value)}
                 onFocus={() => setFocusedField('username')}
                 onBlur={() => setFocusedField(null)}
-                className="w-full bg-white dark:bg-gray-800 border-4 border-black dark:border-gray-600 p-3 pl-10 text-black dark:text-white focus:outline-none focus:border-purple-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] font-mono transition-all duration-200"
+                className={`w-full bg-gray-800 border rounded-xl p-3 pl-10 text-white placeholder-gray-500 focus:outline-none transition-colors ${focusedField === 'username' ? 'border-purple-500' : 'border-gray-700'}`}
                 required
                 disabled={isLoading}
                 autoComplete="username"
@@ -218,14 +201,14 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Password Field */}
-          <div className="form-group">
-            <label className="form-label text-black dark:text-white">
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-300 mb-1.5">
               {t('password')}
             </label>
-            <div className={`relative transition-all duration-200 ${focusedField === 'password' ? 'scale-[1.02]' : ''}`}>
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                <Lock size={20} />
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                <Lock size={18} />
               </div>
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -233,7 +216,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setFocusedField('password')}
                 onBlur={() => setFocusedField(null)}
-                className="w-full bg-white dark:bg-gray-800 border-4 border-black dark:border-gray-600 p-3 pl-10 pr-12 text-black dark:text-white focus:outline-none focus:border-purple-500 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)] font-mono transition-all duration-200"
+                className={`w-full bg-gray-800 border rounded-xl p-3 pl-10 pr-12 text-white placeholder-gray-500 focus:outline-none transition-colors ${focusedField === 'password' ? 'border-purple-500' : 'border-gray-700'}`}
                 required
                 disabled={isLoading}
                 autoComplete="current-password"
@@ -242,74 +225,57 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors touch-target p-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between">
-            <label className="flex items-center gap-2 cursor-pointer group">
+            <label className="flex items-center gap-2 cursor-pointer">
               <span
-                className={`w-5 h-5 border-2 border-black dark:border-white flex items-center justify-center transition-all ${rememberMe ? 'bg-purple-500 border-purple-500' : 'bg-white dark:bg-gray-800'}`}
+                className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all cursor-pointer ${rememberMe ? 'bg-purple-600 border-purple-600' : 'bg-gray-800 border-gray-600'}`}
                 onClick={() => setRememberMe(!rememberMe)}
               >
-                {rememberMe && <Check size={14} className="text-white" />}
+                {rememberMe && <Check size={12} className="text-white" />}
               </span>
-              <span className="text-sm font-bold text-black dark:text-white group-hover:text-purple-500 transition-colors">
-                Remember me
-              </span>
+              <span className="text-sm text-gray-400">Remember me</span>
             </label>
-            <Link
-              href="/forgot-password"
-              className="text-sm font-bold hover:underline decoration-2 underline-offset-2 transition-colors"
-              style={{ color: currentTheme.colors.secondary }}
-            >
+            <Link href="/forgot-password" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
               {t('forgotPassword')}
             </Link>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <motion.button
             type="submit"
             disabled={isLoading}
             whileHover={{ scale: isLoading ? 1 : 1.02 }}
             whileTap={{ scale: isLoading ? 1 : 0.98 }}
-            className="w-full text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all font-bold py-3 text-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 touch-target"
-            style={{ backgroundColor: currentTheme.colors.primary }}
+            className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-black py-3 rounded-xl text-base transition-colors flex items-center justify-center gap-2 mt-2"
           >
             {isLoading ? (
-              <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <>
-                <Lock size={20} />
-                {t('signIn')}
-              </>
+              <>{t('signIn')} ⚽</>
             )}
           </motion.button>
         </form>
 
-        {/* Divider */}
-        <div className="relative my-6">
+        <div className="relative my-5">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t-2 border-gray-200 dark:border-gray-700" />
+            <div className="w-full border-t border-gray-800" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white dark:bg-gray-900 text-gray-500 font-bold">or</span>
+            <span className="px-4 bg-gray-900 text-gray-600">or</span>
           </div>
         </div>
 
-        {/* Sign Up Link */}
-        <p className="text-center text-sm font-bold text-black dark:text-white">
+        <p className="text-center text-sm text-gray-500">
           {t('dontHaveAccount')}{' '}
-          <Link
-            href="/register"
-            className="hover:underline decoration-2 underline-offset-2 transition-colors"
-            style={{ color: currentTheme.colors.primary }}
-          >
+          <Link href="/register" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
             {t('signUp')}
           </Link>
         </p>

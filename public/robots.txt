@@ -1,27 +1,10 @@
-# CinePurr Robots.txt
-# https://cinepurr.com
+# KickPool Robots.txt
+# https://kickpool-khaki.vercel.app
 
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /room/*/
 Disallow: /admin/
-Disallow: /settings/
-Disallow: /forgot-password/
-Disallow: /reset-password/
+Disallow: /_next/
 
-# Sitemaps
-Sitemap: https://cinepurr.com/sitemap.xml
-
-# Crawl-delay for polite bots
-Crawl-delay: 1
-
-# Block AI training crawlers (optional - uncomment if desired)
-# User-agent: GPTBot
-# Disallow: /
-
-# User-agent: ChatGPT-User
-# Disallow: /
-
-# User-agent: Google-Extended
-# Disallow: /
+Sitemap: https://kickpool-khaki.vercel.app/sitemap.xml

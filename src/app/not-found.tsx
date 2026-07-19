@@ -2,47 +2,44 @@
 
 import Link from 'next/link';
 import { motion } from 'motion/react';
-import { Home, Search, ArrowLeft } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import PixelIcon from '@/components/PixelIcon';
 
-const catPuns = [
-  "Looks like this page took a cat nap... permanently!",
-  "This page has gone missing, like a cat at bath time!",
-  "404: Page not feline so good right meow!",
-  "Oops! This page scratched its way out of existence!",
-  "The page you&apos;re looking for is playing hide and seek... and winning!",
-  "This URL is as empty as a food bowl at dinner time!",
+const messages = [
+  "Looks like this page missed the goal... completely!",
+  "404: Page went offside and never came back!",
+  "This page got a red card and left the pitch.",
+  "Oops! The ball rolled out of bounds here.",
+  "The page you're looking for is warming the bench permanently!",
+  "This URL is as empty as the stadium after the final whistle.",
 ];
 
 export default function NotFound() {
-  const [pun, setPun] = useState(catPuns[0]);
+  const [msg, setMsg] = useState(messages[0]);
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    setPun(catPuns[Math.floor(Math.random() * catPuns.length)]);
+    setMsg(messages[Math.floor(Math.random() * messages.length)]);
   }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-purple-950 via-indigo-950 to-purple-900 flex items-center justify-center p-4">
-      {/* Floating particles background */}
+      {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-purple-400/20 rounded-full"
-            initial={{ 
-              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 800)
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
             }}
-            animate={{
-              y: [null, Math.random() * -200 - 100],
-              opacity: [0.2, 0.8, 0.2],
-            }}
+            animate={{ y: [-20, -120], opacity: [0.2, 0.8, 0.2] }}
             transition={{
               duration: Math.random() * 5 + 5,
               repeat: Infinity,
               repeatType: 'reverse',
+              delay: Math.random() * 5,
             }}
           />
         ))}
@@ -61,22 +58,21 @@ export default function NotFound() {
           </h1>
         </motion.div>
 
-        {/* Animated Pixel Cat */}
+        {/* Animated football */}
         <motion.div
           animate={{ 
             y: isHovering ? -10 : [0, -10, 0],
-            rotate: isHovering ? [0, -5, 5, 0] : 0
+            rotate: isHovering ? 360 : [0, 15, -15, 0],
           }}
           transition={{ 
             y: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-            rotate: { duration: 0.5 }
+            rotate: isHovering ? { duration: 0.5 } : { duration: 3, repeat: Infinity },
           }}
           onHoverStart={() => setIsHovering(true)}
           onHoverEnd={() => setIsHovering(false)}
-          className="mb-6 cursor-pointer select-none flex justify-center"
-          style={{ color: isHovering ? '#a855f7' : '#ff69b4' }}
+          className="mb-6 cursor-pointer select-none text-7xl flex justify-center"
         >
-          <PixelIcon name={isHovering ? 'catHappy' : 'cat'} size={96} />
+          ⚽
         </motion.div>
 
         {/* Message */}
@@ -86,7 +82,7 @@ export default function NotFound() {
           transition={{ delay: 0.3 }}
           className="text-xl sm:text-2xl text-purple-200 mb-8 font-medium"
         >
-          {pun}
+          {msg}
         </motion.p>
 
         {/* Action Buttons */}
@@ -98,30 +94,17 @@ export default function NotFound() {
         >
           <Link
             href="/"
-            className="group flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl border-2 border-white/20 shadow-lg hover:shadow-pink-500/25 hover:scale-105 transition-all duration-300"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition-all hover:scale-105"
           >
-            <Home size={20} className="group-hover:animate-bounce" />
-            Go Home
+            <Home size={18} /> Back to Home
           </Link>
-          
           <button
             onClick={() => window.history.back()}
-            className="group flex items-center justify-center gap-2 px-6 py-3 bg-white/10 text-white font-bold rounded-xl border-2 border-white/20 backdrop-blur-sm hover:bg-white/20 hover:scale-105 transition-all duration-300"
+            className="flex items-center justify-center gap-2 px-6 py-3 border border-purple-500 text-purple-300 hover:bg-purple-500/20 font-bold rounded-xl transition-all hover:scale-105"
           >
-            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            Go Back
+            <ArrowLeft size={18} /> Go Back
           </button>
         </motion.div>
-
-        {/* Fun fact */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="mt-12 text-purple-400/60 text-sm"
-        >
-          Fun fact: Cats spend 70% of their lives sleeping. This page is sleeping forever. 💤
-        </motion.p>
       </div>
     </main>
   );

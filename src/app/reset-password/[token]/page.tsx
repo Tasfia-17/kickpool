@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import PixelIcon from '@/components/PixelIcon';
+import { Eye, EyeOff, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export default function ResetPasswordPage() {
   const params = useParams();
@@ -12,6 +13,7 @@ export default function ResetPasswordPage() {
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,110 +51,149 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         router.push('/login');
       }, 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-4">
+    <main className="min-h-screen flex items-center justify-center bg-gray-950 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-2xl p-8 border border-pink-200">
-          {/* Cat Icon */}
-          <div className="text-center mb-6">
-            <div className="mb-2 flex justify-center" style={{ color: '#ff69b4' }}><PixelIcon name="cat" size={64} /></div>
-            <h1 className="text-2xl font-bold text-pink-600">Reset Password</h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Enter your new password below
-            </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-800"
+        >
+          {/* Header */}
+          <div className="text-center mb-8">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 200 }}
+              className="text-5xl mb-4 select-none"
+              aria-hidden="true"
+            >
+              {success ? '✅' : '🔐'}
+            </motion.div>
+            <Link href="/" className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-xl" aria-hidden="true">⚽</span>
+              <span className="font-black text-white text-xl">KickPool</span>
+            </Link>
+            <h1 className="text-2xl font-black text-white">Reset Password</h1>
+            <p className="text-gray-400 text-sm mt-1">Enter your new password below</p>
           </div>
 
           {success ? (
-            <div className="text-center">
-              <div className="mb-4 flex justify-center" style={{ color: '#22c55e' }}><PixelIcon name="check" size={64} /></div>
-              <h2 className="text-xl font-bold text-green-600 mb-2">
-                Password Reset Successful!
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Redirecting you to login page...
-              </p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center"
+            >
+              <div className="text-5xl mb-4 select-none" aria-hidden="true">🎉</div>
+              <h2 className="text-xl font-black text-green-400 mb-2">Password Reset!</h2>
+              <p className="text-gray-400 mb-6">Redirecting you to login...</p>
               <Link
                 href="/login"
-                className="text-pink-500 hover:text-pink-600 font-medium"
+                className="inline-block px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition-colors"
               >
-                Click here if not redirected
+                Sign In Now
               </Link>
-            </div>
+            </motion.div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-pink-200 
-                           focus:border-pink-400 focus:outline-none transition-colors
-                           bg-white/50 text-gray-800 placeholder-gray-400"
-                  placeholder="Enter new password"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-pink-200 
-                           focus:border-pink-400 focus:outline-none transition-colors
-                           bg-white/50 text-gray-800 placeholder-gray-400"
-                  placeholder="Confirm new password"
-                  required
-                />
-              </div>
-
               {error && (
-                <div className="bg-red-100 border border-red-300 text-red-600 px-4 py-3 rounded-xl text-sm">
-                  {error}
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-3 bg-red-950/60 border border-red-800 text-red-400 text-sm rounded-xl flex items-center gap-2"
+                >
+                  <AlertCircle size={16} /> {error}
+                </motion.div>
               )}
 
-              <button
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-1.5">
+                  New Password
+                </label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <Lock size={18} />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 rounded-xl p-3 pl-10 pr-12 text-white placeholder-gray-500 focus:outline-none transition-colors"
+                    required
+                    disabled={loading}
+                    minLength={6}
+                    placeholder="Min 6 characters"
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-1.5">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <Lock size={18} />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-700 focus:border-purple-500 rounded-xl p-3 pl-10 text-white placeholder-gray-500 focus:outline-none transition-colors"
+                    required
+                    disabled={loading}
+                    placeholder="Repeat password"
+                    autoComplete="new-password"
+                  />
+                  {confirmPassword && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {newPassword === confirmPassword
+                        ? <CheckCircle size={18} className="text-green-400" />
+                        : <AlertCircle size={18} className="text-red-400" />}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-pink-400 to-purple-400 
-                         text-white font-semibold rounded-xl hover:from-pink-500 hover:to-purple-500
-                         transition-all duration-200 shadow-lg hover:shadow-xl
-                         disabled:opacity-50 disabled:cursor-not-allowed"
+                whileHover={{ scale: loading ? 1 : 1.02 }}
+                whileTap={{ scale: loading ? 1 : 0.98 }}
+                className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-black py-3 rounded-xl text-base transition-colors flex items-center justify-center gap-2 mt-2"
               >
                 {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Resetting...
-                  </span>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  'Reset Password'
+                  <>Reset Password ⚽</>
                 )}
-              </button>
+              </motion.button>
 
-              <div className="text-center text-sm text-gray-500">
+              <p className="text-center text-sm text-gray-500">
                 Remember your password?{' '}
-                <Link href="/login" className="text-pink-500 hover:text-pink-600 font-medium">
-                  Login
+                <Link href="/login" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+                  Sign In
                 </Link>
-              </div>
+              </p>
             </form>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </main>
   );
 }

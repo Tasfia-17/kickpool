@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     url: `${baseUrl}/about`,
     title: 'About KickPool — Free Watch Party App for YouTube & Videos',
     description:
-      'KickPool is the free, no-login watch party platform. Sync YouTube and videos with friends in real-time — chat, play minigames, earn achievements, and stay cozy together. 🐱🎬',
+      'KickPool is the free, no-login World Cup sweepstakes platform. Predict World Cup scores and win USDC — settled on Solana — chat, play minigames, earn achievements, and stay cozy together. ⚽🏆',
     siteName: 'KickPool',
     images: [
       {
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'About KickPool — Free Watch Party App',
     description:
-      'Watch YouTube with friends for free. Sync playback, chat, and play games together — no account required. 🐱🎬',
+      'Watch YouTube with friends for free. Sync playback, chat, and play games together — no account required. ⚽🏆',
     images: [`${baseUrl}/og-image.png`],
     creator: '@kickpool',
   },

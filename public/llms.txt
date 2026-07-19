@@ -1,33 +1,29 @@
-# CinePurr
+# KickPool
 
-> CinePurr is a real-time watch party platform where friends can watch movies, videos, and streams together in synchronized rooms with live chat.
+> KickPool is a World Cup 2026 sweepstakes platform where friends predict match scores, watch live with real-time AI commentary, and get paid out automatically on Solana.
 
 ## Features
 
-- Create and join watch rooms with real-time video synchronization
-- Live chat with emoji reactions and Pokémon-themed UI
-- User profiles with achievements, badges, and XP leveling
-- Study rooms with Pomodoro timer, lo-fi radio, and productivity tools
-- Virtual pet companion that evolves as you level up
-- Multiple Pokémon themes to customize the experience
-- Mobile-friendly progressive web app (PWA)
+- Create and join group sweepstakes pools for any World Cup match
+- Live score streaming powered by TxLINE on-chain data
+- AI pundit commentary with Gemini
+- Automatic Solana settlement via Merkle proof verification
+- Predict scores with USDC entry fees
 
 ## Pages
 
-- [Home](https://cinepurr.me/): Browse public rooms, create rooms, or join via invite code
-- [Register](https://cinepurr.me/register): Create a free account
-- [Login](https://cinepurr.me/login): Sign in to your account
-- [Study Room](https://cinepurr.me/study): Pomodoro timer, to-do lists, calculator, and lo-fi radio
-- [Games](https://cinepurr.me/games): Mini-games including Abyssal Watch
-- [About](https://cinepurr.me/about): Learn more about CinePurr
-- [Privacy](https://cinepurr.me/privacy): Privacy policy and terms of service
-- [Contact](https://cinepurr.me/contact): Get in touch with the team
+- [Home](https://kickpool-khaki.vercel.app/): Browse open pools or create a new one
+- [Register](https://kickpool-khaki.vercel.app/register): Create a free account
+- [Login](https://kickpool-khaki.vercel.app/login): Sign in to your account
+- [Create Pool](https://kickpool-khaki.vercel.app/pool/create): Start a new World Cup sweepstakes pool
+- [Join Pool](https://kickpool-khaki.vercel.app/pool/join): Join with an invite code
+- [About](https://kickpool-khaki.vercel.app/about): Learn more about KickPool
+- [Privacy](https://kickpool-khaki.vercel.app/privacy): Privacy policy
 
 ## Tech Stack
 
-- Next.js 14 with App Router
-- TypeScript
-- Tailwind CSS
-- Prisma ORM
-- Socket.IO for real-time communication
-- NextAuth.js for authentication
+- Next.js 16 frontend on Vercel
+- Socket.io server on Railway
+- PostgreSQL database
+- Solana smart contracts via TxLINE
+- Google Gemini AI commentary
