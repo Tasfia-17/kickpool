@@ -361,7 +361,7 @@ export default function RegisterPage() {
               </div>
             </div>
             <h1
-              className="text-3xl font-black mb-6 text-center text-white"}
+              className="text-3xl font-black mb-6 text-center text-white"
             >
               {t('createAccount')}
             </h1>
