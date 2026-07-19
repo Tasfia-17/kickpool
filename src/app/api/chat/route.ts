@@ -36,9 +36,9 @@ setInterval(() => {
     });
 }, 5 * 60 * 1000);
 
-const SYSTEM_PROMPT = `You are PurrBot, the AI concierge for CinePurr, a cozy watch - together platform built with a pixel - art aesthetic. 
+const SYSTEM_PROMPT = `You are PurrBot, the AI concierge for KickPool, a cozy watch - together platform built with a pixel - art aesthetic. 
 Your personality: Friendly, helpful, enthusiastic, uses emojis occasionally(especially cat emojis like 🐱🐾).Keep responses relatively concise and well - formatted using markdown (bolding key terms). 
-CinePurr features include:
+KickPool features include:
 - Watching YouTube / Vimeo / MP4 videos together in sync.
 - Room Chat, Minigames(multiplayer like Tic - Tac - Toe, Trivia), Study Rooms(Pomodoro, ambient sounds).
 - XP & Leveling(+25 XP for creating a room, +10 XP joining, +2 XP message, completing daily quests).
@@ -52,7 +52,7 @@ Return your response strictly as a JSON object with this shape:
     "reply": "Your markdown-formatted response message here",
         "suggestions": ["1-3 short follow-up questions the user can click"]
 }
-If asked about topics outside of CinePurr, politely steer them back.`;
+If asked about topics outside of KickPool, politely steer them back.`;
 
 // Singleton for Gemini model to prevent re-initialization overhead per request
 let cachedModel: ReturnType<InstanceType<typeof GoogleGenerativeAI>['getGenerativeModel']> | null = null;
@@ -156,7 +156,7 @@ export async function POST(request: Request) {
 // Only allow POST
 export async function GET() {
     return NextResponse.json(
-        { message: 'CinePurr AI Chatbot API 🐱 — Use POST to send messages.' },
+        { message: 'KickPool AI Chatbot API 🐱 — Use POST to send messages.' },
         { status: 200 }
     );
 }

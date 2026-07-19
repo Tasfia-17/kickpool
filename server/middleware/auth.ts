@@ -1,5 +1,5 @@
 /**
- * CinePurr Server — Socket.io Authentication Middleware
+ * KickPool Server — Socket.io Authentication Middleware
  *
  * Verifies NextAuth JWTs during the WebSocket handshake using the
  * `next-auth/jwt` decode function. Authenticated users get their

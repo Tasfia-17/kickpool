@@ -1,5 +1,5 @@
 /**
- * CinePurr — Presence & Social Domain Handler
+ * KickPool — Presence & Social Domain Handler
  *
  * Manages user online presence, direct messaging, and the critical
  * disconnect cleanup logic (room removal, host promotion, game cleanup).

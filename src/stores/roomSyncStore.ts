@@ -1,5 +1,5 @@
 /**
- * CinePurr — React 19 Room Sync Store
+ * KickPool — React 19 Room Sync Store
  *
  * Provides a `useSyncExternalStore`-based hook for subscribing to
  * real-time room state via Socket.io. This replaces `useEffect`-based

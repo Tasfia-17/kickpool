@@ -1,4 +1,4 @@
-// Pokemon-themed color themes for CinePurr
+// Pokemon-themed color themes for KickPool
 // Uses PokeAPI animated sprites from Generation V (Black/White)
 
 // Sprite URL helpers — served from /public for long-lived caching

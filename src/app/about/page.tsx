@@ -50,24 +50,24 @@ export default function AboutPage() {
             <Info size={40} className="text-white" />
           </div>
           <h1 className="text-4xl sm:text-5xl font-black mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">
-            About CinePurr
+            About KickPool
           </h1>
           <p className={`text-lg sm:text-xl max-w-2xl mx-auto ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             Watch videos together, stay cozy. 🐱
           </p>
         </motion.div>
 
-        {/* What is CinePurr */}
+        {/* What is KickPool */}
         <motion.section variants={item} className="mb-12">
           <div className={`p-6 sm:p-8 rounded-2xl border-2 ${isDarkMode ? 'border-white/20 bg-white/5' : 'border-black/10 bg-black/5'}`}>
             <h2 className="text-2xl font-black mb-4 flex items-center gap-3">
               <Film size={24} className="text-pink-500" />
-              What is CinePurr?
+              What is KickPool?
             </h2>
             <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              CinePurr is a platform for watching videos together in real-time. Create rooms, invite friends,
+              KickPool is a platform for watching videos together in real-time. Create rooms, invite friends,
               and enjoy synchronized viewing experiences. Whether you&apos;re watching YouTube videos, movies, or TV shows,
-              CinePurr keeps everyone in sync so you can enjoy the moment together.
+              KickPool keeps everyone in sync so you can enjoy the moment together.
             </p>
           </div>
         </motion.section>
@@ -101,7 +101,7 @@ export default function AboutPage() {
               Our Mission
             </h2>
             <p className={`text-lg leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              CinePurr was created to bring people together through shared entertainment. We believe that watching
+              KickPool was created to bring people together through shared entertainment. We believe that watching
               videos together, even when apart, creates meaningful connections and memorable experiences. Our retro
               aesthetic and playful design make every interaction feel cozy and fun.
             </p>

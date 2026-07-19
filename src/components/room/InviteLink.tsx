@@ -139,8 +139,8 @@ export const InviteLink: React.FC<InviteLinkProps> = ({ roomId }) => {
                       onClick={async () => {
                         try {
                           await navigator.share({
-                            title: 'Join my CinePurr room!',
-                            text: `Join me on CinePurr! Use code: ${inviteCode}`,
+                            title: 'Join my KickPool room!',
+                            text: `Join me on KickPool! Use code: ${inviteCode}`,
                             url: `${window.location.origin}/join?code=${inviteCode}`,
                           });
                         } catch (err) {

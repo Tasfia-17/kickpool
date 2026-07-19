@@ -1,5 +1,5 @@
 /**
- * CinePurr — Room Lifecycle Domain Handler
+ * KickPool — Room Lifecycle Domain Handler
  *
  * Manages the entire room lifecycle: joining, leaving, video changes,
  * co-host management, control requests, kicks, deletion, and the

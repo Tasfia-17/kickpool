@@ -46,12 +46,12 @@ export default function VirtualPet() {
     useEffect(() => {
         setMounted(true);
         // Load pet from local storage
-        const savedPet = localStorage.getItem('cinepurr_virtual_pet');
+        const savedPet = localStorage.getItem('kickpool_virtual_pet');
         if (savedPet && POKEMON_DATA[savedPet]) {
             setPetFamily(savedPet);
         }
 
-        const savedName = localStorage.getItem('cinepurr_virtual_pet_name');
+        const savedName = localStorage.getItem('kickpool_virtual_pet_name');
         if (savedName) {
             setCustomName(savedName);
         }
@@ -76,20 +76,20 @@ export default function VirtualPet() {
 
     const changePet = (newPet: string) => {
         setPetFamily(newPet);
-        localStorage.setItem('cinepurr_virtual_pet', newPet);
+        localStorage.setItem('kickpool_virtual_pet', newPet);
         // Reset custom name when changing species
         setCustomName('');
-        localStorage.removeItem('cinepurr_virtual_pet_name');
+        localStorage.removeItem('kickpool_virtual_pet_name');
     };
 
     const saveName = () => {
         const newName = tempName.trim();
         if (newName) {
             setCustomName(newName);
-            localStorage.setItem('cinepurr_virtual_pet_name', newName);
+            localStorage.setItem('kickpool_virtual_pet_name', newName);
         } else {
             setCustomName('');
-            localStorage.removeItem('cinepurr_virtual_pet_name');
+            localStorage.removeItem('kickpool_virtual_pet_name');
         }
         setIsEditingName(false);
     };

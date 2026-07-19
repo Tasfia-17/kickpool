@@ -297,7 +297,7 @@ export function FNAFGame() {
               </h2>
 
               <div className="text-xs text-gray-500 mb-4 max-w-[200px]">
-                Survive 5 nights at CinePurr's haunted cinema. Watch the cameras. Close the doors. Don't run out of power.
+                Survive 5 nights at KickPool's haunted cinema. Watch the cameras. Close the doors. Don't run out of power.
               </div>
 
               <div className="text-sm text-yellow-500 mb-4">Night {night}</div>

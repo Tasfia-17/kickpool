@@ -3,7 +3,7 @@ import PortfolioClient from "./PortfolioClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Portfolio | CinePurr",
+  title: "Portfolio | KickPool",
   description: "Graphic & Motion Designer Portfolio.",
 };
 

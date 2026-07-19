@@ -1,5 +1,5 @@
 /**
- * CinePurr Server — Type-Safe Prisma Access
+ * KickPool Server — Type-Safe Prisma Access
  *
  * Eliminates ALL `as unknown as` casts by leveraging Prisma's generated
  * utility types: `Prisma.validator` for compile-time query validation

@@ -11,10 +11,10 @@ export const revalidate = 0;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { roomId } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cinepurr.me';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kickpool.me';
   
   return {
-    title: 'Join Watch Party - CinePurr',
+    title: 'Join Watch Party - KickPool',
     openGraph: {
       images: [`${baseUrl}/api/rooms/${roomId}/invite-image`],
     },

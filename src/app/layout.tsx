@@ -24,7 +24,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#ff69b4",
+  themeColor: "#7c3aed",
 };
 
 const baseUrl =
@@ -47,8 +47,10 @@ export const metadata: Metadata = {
     "soccer prediction",
     "live commentary",
     "solana",
-    "watch party",
-    "group betting",
+    "txline",
+    "group pool",
+    "crypto sports",
+    "usdc payout",
   ],
   authors: [{ name: "KickPool" }],
   creator: "KickPool",
@@ -115,7 +117,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (sessionStorage.getItem('cinepurr_intro_played')) {
+                if (sessionStorage.getItem('kickpool_intro_played')) {
                   document.documentElement.classList.add('skip-intro');
                 }
               } catch (e) {}

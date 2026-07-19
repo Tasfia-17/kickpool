@@ -5,7 +5,7 @@
 declare global {
   // Prevent duplicate intervals under hot-reload in development.
   // eslint-disable-next-line no-var
-  var __cinepurr_security_cleanup_interval_set: boolean | undefined;
+  var __kickpool_security_cleanup_interval_set: boolean | undefined;
 }
 
 // HTML entity encoding to prevent XSS
@@ -135,7 +135,7 @@ export const checkRateLimit = (
 };
 
 // Clean up old rate limit entries periodically
-if (!globalThis.__cinepurr_security_cleanup_interval_set) {
+if (!globalThis.__kickpool_security_cleanup_interval_set) {
   setInterval(() => {
     const now = Date.now();
     rateLimitStore.forEach((record, key) => {
@@ -144,7 +144,7 @@ if (!globalThis.__cinepurr_security_cleanup_interval_set) {
       }
     });
   }, 60000); // Clean every minute
-  globalThis.__cinepurr_security_cleanup_interval_set = true;
+  globalThis.__kickpool_security_cleanup_interval_set = true;
 }
 
 // Content Security Policy nonce generator

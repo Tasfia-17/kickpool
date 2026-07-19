@@ -1,5 +1,5 @@
 /**
- * CinePurr Server — Shared Type Definitions
+ * KickPool Server — Shared Type Definitions
  *
  * Single source of truth for all server-side interfaces.
  * Domain, infrastructure, and delivery layers import from here.

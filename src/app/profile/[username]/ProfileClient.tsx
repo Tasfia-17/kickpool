@@ -291,7 +291,7 @@ export default function ProfileClient({ initialProfile }: ProfileClientProps) {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="max-w-3xl">
               <p className="pixel-label inline-flex items-center gap-2">
-                  <Users size={14} /> CinePurr Member
+                  <Users size={14} /> KickPool Member
               </p>
               <h1 className="mt-3 text-[2.4rem] font-bold leading-none text-white sm:text-[3.3rem]">
                 {profile.activeRoomPersona?.displayName || profile.name}

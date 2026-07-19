@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 export type Language = 'en' | 'tr';
 
-const STORAGE_KEY = 'cinepurr-language';
+const STORAGE_KEY = 'kickpool-language';
 
 const translations = {
   en: {
@@ -150,7 +150,7 @@ const translations = {
     loginStreak: 'Login Streak',
     netLog: 'Net Log',
     arcade: 'Arcade',
-    aboutCinePurr: 'About CinePurr',
+    aboutKickPool: 'About KickPool',
     contactUs: 'Contact Us',
     studyRoom: 'Study Room',
     // Other
@@ -339,7 +339,7 @@ const translations = {
     loginStreak: 'Giriş Serisi',
     netLog: 'Ağ Günlüğü',
     arcade: 'Arcade',
-    aboutCinePurr: 'CinePurr Hakkında',
+    aboutKickPool: 'KickPool Hakkında',
     contactUs: 'Bize Ulaşın',
     studyRoom: 'Çalışma Odası',
     // Other

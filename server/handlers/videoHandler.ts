@@ -1,5 +1,5 @@
 /**
- * CinePurr — Video Synchronization Domain Handler
+ * KickPool — Video Synchronization Domain Handler
  *
  * Manages real-time video playback synchronization across watch party
  * participants. Implements the Soft Correction algorithm from the PDF

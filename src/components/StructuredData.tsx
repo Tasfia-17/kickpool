@@ -13,7 +13,7 @@ const getBaseUrl = () => {
     return window.location.origin;
   }
   // Server-side: use environment variable or fallback
-  return process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://cinepurr.me';
+  return process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://kickpool.me';
 };
 
 export default function StructuredData({ type = 'website' }: StructuredDataProps) {
@@ -22,8 +22,8 @@ export default function StructuredData({ type = 'website' }: StructuredDataProps
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'CinePurr',
-    alternateName: 'CinePurr - Watch Together',
+    name: 'KickPool',
+    alternateName: 'KickPool - Watch Together',
     url: baseUrl,
     description: 'Watch movies and videos together in real-time with friends',
     potentialAction: {
@@ -39,7 +39,7 @@ export default function StructuredData({ type = 'website' }: StructuredDataProps
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'CinePurr',
+    name: 'KickPool',
     url: baseUrl,
     logo: `${baseUrl}/logo.jpg`,
     contactPoint: {
@@ -52,7 +52,7 @@ export default function StructuredData({ type = 'website' }: StructuredDataProps
   const webAppSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'CinePurr',
+    name: 'KickPool',
     applicationCategory: 'EntertainmentApplication',
     operatingSystem: 'Any',
     offers: {
@@ -89,7 +89,7 @@ export default function StructuredData({ type = 'website' }: StructuredDataProps
 // Combined schema for maximum SEO
 export function FullStructuredData() {
   // Get base URL (server-side only for this component)
-  const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://cinepurr.me';
+  const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://kickpool.me';
   
   const combinedSchema = {
     '@context': 'https://schema.org',
@@ -97,7 +97,7 @@ export function FullStructuredData() {
       {
         '@type': 'WebSite',
         '@id': `${baseUrl}/#website`,
-        name: 'CinePurr',
+        name: 'KickPool',
         url: baseUrl,
         description: 'Watch movies and videos together in real-time with friends',
         publisher: { '@id': `${baseUrl}/#organization` },
@@ -110,7 +110,7 @@ export function FullStructuredData() {
       {
         '@type': 'Organization',
         '@id': `${baseUrl}/#organization`,
-        name: 'CinePurr',
+        name: 'KickPool',
         url: baseUrl,
         logo: {
           '@type': 'ImageObject',
@@ -120,7 +120,7 @@ export function FullStructuredData() {
       {
         '@type': 'WebApplication',
         '@id': `${baseUrl}/#webapp`,
-        name: 'CinePurr',
+        name: 'KickPool',
         applicationCategory: 'EntertainmentApplication',
         operatingSystem: 'Any',
         browserRequirements: 'Requires JavaScript',

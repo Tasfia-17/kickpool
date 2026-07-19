@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { HistoryWindow } from '@/components/windows/HistoryWindow';
 
 export const metadata: Metadata = {
-  title: 'Watch History | CinePurr',
+  title: 'Watch History | KickPool',
   description: 'View your watch history and recent room activity.',
 };
 

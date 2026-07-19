@@ -26,7 +26,7 @@ const BadgeContext = createContext<BadgeContextValue | null>(null);
 // User-specific storage key to prevent badge sharing between accounts
 const getStorageKey = (username: string | null | undefined) => {
   if (!username) return null;
-  return `cinepurr_badges_${username}_v2`;
+  return `kickpool_badges_${username}_v2`;
 };
 
 // Achievement Notification Component

@@ -10,7 +10,7 @@ export default function ServiceWorkerRegistration() {
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
-            console.log('🐱 CinePurr SW registered:', registration.scope);
+            console.log('🐱 KickPool SW registered:', registration.scope);
             
             // Check for updates
             registration.addEventListener('updatefound', () => {
@@ -19,7 +19,7 @@ export default function ServiceWorkerRegistration() {
                 newWorker.addEventListener('statechange', () => {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                     // New content available
-                    console.log('🐱 New CinePurr version available!');
+                    console.log('🐱 New KickPool version available!');
                   }
                 });
               }

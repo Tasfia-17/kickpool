@@ -16,14 +16,14 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
     const { currentTheme } = usePokemonTheme();
 
     useEffect(() => {
-        const alreadySeen = !!sessionStorage.getItem('cinepurr_intro_played');
+        const alreadySeen = !!sessionStorage.getItem('kickpool_intro_played');
 
         if (!alreadySeen) {
             // First-time visitor — show the intro overlay
             setShow(true);
             const timer = setTimeout(() => {
                 setShow(false);
-                sessionStorage.setItem('cinepurr_intro_played', 'true');
+                sessionStorage.setItem('kickpool_intro_played', 'true');
                 onComplete?.();
             }, 3000);
             return () => clearTimeout(timer);
@@ -69,7 +69,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
                                     transition={{ delay: 0.4, duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
                                     className="text-4xl md:text-5xl font-black font-mono tracking-tight text-black dark:text-white"
                                 >
-                                    Welcome to <span style={{ color: currentTheme.colors.primary }}>CinePurr</span>.
+                                    Welcome to <span style={{ color: currentTheme.colors.primary }}>KickPool</span>.
                                 </m.h1>
                             </m.div>
 

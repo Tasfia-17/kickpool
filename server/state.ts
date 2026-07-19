@@ -1,5 +1,5 @@
 /**
- * CinePurr Server — Centralized State Management
+ * KickPool Server — Centralized State Management
  *
  * All mutable server state lives here. Handlers and middleware import
  * from this module instead of declaring global Maps. This ensures:

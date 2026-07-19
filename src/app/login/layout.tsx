@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Sign In | CinePurr",
-    description: "Sign in to your CinePurr account to watch movies and videos together with friends.",
+    title: "Sign In | KickPool",
+    description: "Sign in to your KickPool account to watch movies and videos together with friends.",
 };
 
 export default function LoginLayout({

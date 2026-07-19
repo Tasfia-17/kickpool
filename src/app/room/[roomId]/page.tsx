@@ -79,8 +79,8 @@ export default function RoomPage({ params: _params }: RoomPageProps) {
   // Load pet info on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const family = localStorage.getItem('cinepurr_virtual_pet') || 'charmander';
-      const name = localStorage.getItem('cinepurr_virtual_pet_name') || '';
+      const family = localStorage.getItem('kickpool_virtual_pet') || 'charmander';
+      const name = localStorage.getItem('kickpool_virtual_pet_name') || '';
       setPetInfo({ family, name });
     }
   }, []);

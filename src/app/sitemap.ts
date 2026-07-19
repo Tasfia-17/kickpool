@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // re-generate at most once per hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://cinepurr.me';
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://kickpool.me';
 
   // Static pages
   const staticPages = [

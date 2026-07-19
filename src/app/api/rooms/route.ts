@@ -118,7 +118,7 @@ async function ensureDemoUsersAndRoom() {
         maxUsers: 50,
         hostId: host.id,
         currentVideoUrl: '',
-        currentVideoTitle: 'Welcome to CinePurr',
+        currentVideoTitle: 'Welcome to KickPool',
       },
     });
 

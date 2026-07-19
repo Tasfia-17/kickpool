@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Film News — Trending & Now Playing Movies',
   description:
-    'Browse trending movies, now playing in cinemas, and upcoming releases. Discover what to watch together on CinePurr.',
+    'Browse trending movies, now playing in cinemas, and upcoming releases. Discover what to watch together on KickPool.',
   alternates: {
-    canonical: `${process.env.NEXTAUTH_URL || 'https://cinepurr.me'}/news`,
+    canonical: `${process.env.NEXTAUTH_URL || 'https://kickpool.me'}/news`,
   },
 };
 

@@ -1,5 +1,5 @@
 /**
- * CinePurr — Game Domain Handler
+ * KickPool — Game Domain Handler
  *
  * Manages the multiplayer mini-game subsystem: lobby creation, joining,
  * invites, move broadcasting, state synchronization, and cleanup.

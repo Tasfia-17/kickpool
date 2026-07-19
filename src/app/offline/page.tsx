@@ -52,7 +52,7 @@ export default function OfflinePage() {
           transition={{ delay: 0.4 }}
           className="text-gray-400 mb-8"
         >
-          CinePurr needs an internet connection to watch videos together. 
+          KickPool needs an internet connection to watch videos together. 
           Check your connection and try again!
         </motion.p>
 

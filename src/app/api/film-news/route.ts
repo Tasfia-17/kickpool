@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 function buildHeaders(key: string): Record<string, string> {
   const headers: Record<string, string> = {
     'Accept': 'application/json',
-    'User-Agent': 'CinePurr/1.0',
+    'User-Agent': 'KickPool/1.0',
   };
   if (key.startsWith('eyJ')) {
     headers['Authorization'] = `Bearer ${key}`;

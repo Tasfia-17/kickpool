@@ -19,7 +19,7 @@ interface TourStep {
 const GUEST_STEPS: TourStep[] = [
   {
     target: null,
-    title: 'Welcome to CinePurr!',
+    title: 'Welcome to KickPool!',
     emoji: '🐱',
     content:
       'Watch movies, YouTube videos & live TV together with friends in perfect sync. Let us show you around — it only takes a moment!',
@@ -78,7 +78,7 @@ const GUEST_STEPS: TourStep[] = [
 const LOGGED_IN_STEPS: TourStep[] = [
   {
     target: null,
-    title: 'Welcome to CinePurr!',
+    title: 'Welcome to KickPool!',
     emoji: '🐱',
     content:
       'Watch movies, YouTube videos & live TV together with friends in perfect sync. Let us show you around — it only takes a moment!',
@@ -161,7 +161,7 @@ export default function OnboardingTour({ onComplete, isLoggedIn = false }: Onboa
     if (isAutomationSession) {
       return;
     }
-    const done = localStorage.getItem('cinepurr_tour_completed');
+    const done = localStorage.getItem('kickpool_tour_completed');
     if (!done) {
       initiated.current = true;
       // Increased delay to 4500ms so the intro animation fully completes before the tour pops up
@@ -213,7 +213,7 @@ export default function OnboardingTour({ onComplete, isLoggedIn = false }: Onboa
   };
   const prev = () => { if (step > 0) setStep(s => s - 1); };
   const finish = () => {
-    localStorage.setItem('cinepurr_tour_completed', 'true');
+    localStorage.setItem('kickpool_tour_completed', 'true');
     setVisible(false);
     onComplete?.();
   };
@@ -458,7 +458,7 @@ export default function OnboardingTour({ onComplete, isLoggedIn = false }: Onboa
 /** Call this to reset the tour (testing only) */
 export function useResetTour() {
   return () => {
-    localStorage.removeItem('cinepurr_tour_completed');
+    localStorage.removeItem('kickpool_tour_completed');
     window.location.reload();
   };
 }

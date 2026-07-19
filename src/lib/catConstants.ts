@@ -1,4 +1,4 @@
-// Cat facts for CinePurr - replacing Pokemon facts
+// Cat facts for KickPool - replacing Pokemon facts
 // All original cat facts, no IP issues!
 // Cat sprites by 0x72 (Robert Norenberg) - Licensed under CC BY-SA 4.0
 
@@ -60,7 +60,7 @@ export const CAT_FACTS_EN = [
   { fact: "Cats can squeeze through any gap their head fits!", cat: "liquid", avatar: catSprite(34) },
   { fact: "Cats always land on their feet thanks to the 'righting reflex'!", cat: "acrobat", avatar: catSprite(35) },
 
-  // CinePurr Themed
+  // KickPool Themed
   { fact: "Cats love watching TV - especially bird videos!", cat: "watcher", avatar: catSprite(36) },
   { fact: "A cat's favorite genre? Anything with yarn!", cat: "movie", avatar: catSprite(37) },
   { fact: "Cats binge-watch by napping through commercials!", cat: "couch", avatar: catSprite(38) },
@@ -122,7 +122,7 @@ export const CAT_FACTS_TR = [
   { fact: "Kediler başlarının sığdığı her boşluktan geçebilir!", cat: "liquid", avatar: catSprite(34) },
   { fact: "Kediler 'düzeltme refleksi' sayesinde hep ayaklarının üstüne düşer!", cat: "acrobat", avatar: catSprite(35) },
 
-  // CinePurr Temalı
+  // KickPool Temalı
   { fact: "Kediler TV izlemeyi sever - özellikle kuş videolarını!", cat: "watcher", avatar: catSprite(36) },
   { fact: "Bir kedinin favori türü? İp olan herşey!", cat: "movie", avatar: catSprite(37) },
   { fact: "Kediler reklamlarda uyuyarak dizi maratonu yapar!", cat: "couch", avatar: catSprite(38) },

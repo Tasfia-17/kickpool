@@ -18,7 +18,7 @@ export const contentType = "image/png";
 const baseUrl =
   process.env.NEXTAUTH_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://cinepurr.me";
+  "https://kickpool.me";
 
 export default async function ProfileOGImage({
   params,
@@ -45,7 +45,7 @@ export default async function ProfileOGImage({
             fontWeight: 700,
           }}
         >
-          CinePurr Hideout
+          KickPool Hideout
         </div>
       ),
       size,
@@ -120,7 +120,7 @@ export default async function ProfileOGImage({
                 textTransform: "uppercase",
               }}
             >
-              <span>CinePurr Passport</span>
+              <span>KickPool Passport</span>
               <span>{scene.label}</span>
             </div>
 

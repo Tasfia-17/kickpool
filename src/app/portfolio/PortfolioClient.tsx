@@ -347,7 +347,7 @@ export default function PortfolioClient() {
                 </p>
                 <p className="text-base leading-relaxed" style={{ color: P.textSub }}>
                   Crafting cinematic visual experiences through bold design &amp; motion.
-                  Creator of CinePurr.
+                  Creator of KickPool.
                 </p>
               </div>
             </motion.div>
@@ -580,7 +580,7 @@ export default function PortfolioClient() {
                 className="text-[10px] font-mono uppercase tracking-[0.3em]"
                 style={{ color: P.textMuted }}
               >
-                Powered by CinePurr
+                Powered by KickPool
               </span>
             </div>
           </section>

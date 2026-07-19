@@ -1,4 +1,4 @@
-// Pokemon-themed color themes for CinePurr
+// Pokemon-themed color themes for KickPool
 // Uses PokeAPI animated sprites from Generation V (Black/White)
 import { POKEMON_THEME_DATA, PokemonThemeConfig, getPokeSprite } from './pokemonThemeData';
 

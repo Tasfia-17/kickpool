@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Create Account | CinePurr",
-    description: "Create a free CinePurr account to watch movies and videos together with friends in real-time.",
+    title: "Create Account | KickPool",
+    description: "Create a free KickPool account to watch movies and videos together with friends in real-time.",
 };
 
 export default function RegisterLayout({

@@ -186,7 +186,7 @@ export const HomeStatWindows = memo(function HomeStatWindows({
         isOpen={wm.windows.about}
         onClose={() => wm.closeWindow('about')}
         onFocus={() => wm.focusWindow('about')}
-        title={t('aboutCinePurr')}
+        title={t('aboutKickPool')}
         icon={<Info size={16} />}
         zIndex={wm.getZIndex('about')}
         windowType="utility"

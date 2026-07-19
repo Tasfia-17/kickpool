@@ -1,5 +1,5 @@
 /**
- * CinePurr — Chat Domain Handler
+ * KickPool — Chat Domain Handler
  *
  * Manages the full chat lifecycle: message sending with Write-Behind
  * caching, history retrieval, typing indicators, and message reactions.

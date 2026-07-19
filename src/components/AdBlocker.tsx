@@ -149,7 +149,7 @@ export const useAdBlocker = () => {
           elements.forEach(el => {
             // Don't remove our own elements or video players
             if (!el.closest('.video-player') &&
-                !el.closest('[data-cinepurr]') &&
+                !el.closest('[data-kickpool]') &&
                 !el.id?.includes('player')) {
               (el as HTMLElement).style.display = 'none';
             }

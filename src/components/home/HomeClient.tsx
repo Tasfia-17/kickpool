@@ -739,7 +739,7 @@ export default function HomeClient({ initialRooms = [] }: { initialRooms?: Room[
         <footer className={`hidden sm:block relative p-6 pb-24 text-center text-sm transition-all duration-700 delay-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           {/* Top accent line */}
           <div className="w-24 h-1 mx-auto mb-4 rounded-full opacity-40" style={{ backgroundColor: currentTheme.colors.primary }} />
-          <p className="opacity-90 text-xs">© {new Date().getFullYear()} CinePurr. {t('allRightsReserved')}</p>
+          <p className="opacity-90 text-xs">© {new Date().getFullYear()} KickPool. {t('allRightsReserved')}</p>
           <p className="text-xs mt-1 opacity-80">Pokémon sprites via <a href="https://pokeapi.co/" rel="noopener noreferrer" className="underline hover:opacity-100 transition-opacity">PokéAPI</a> • Pokémon © Nintendo/Game Freak</p>
         </footer>
       )}
@@ -797,8 +797,8 @@ export default function HomeClient({ initialRooms = [] }: { initialRooms?: Room[
                 },
                 {
                   icon: <Heart size={18} className="text-yellow-500 fill-yellow-500" />,
-                  label: "Support CinePurr & keep the vibes cozy! :3",
-                  onClick: () => window.open('https://buymeacoffee.com/cinepurr', '_blank'),
+                  label: "Support KickPool & keep the vibes cozy! :3",
+                  onClick: () => window.open('https://buymeacoffee.com/kickpool', '_blank'),
                   className: "!bg-yellow-100 hover:!bg-yellow-200 dark:!bg-yellow-900 dark:hover:!bg-yellow-800 border-2 !border-yellow-400"
                 }
               ]}

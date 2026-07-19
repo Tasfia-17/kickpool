@@ -1,15 +1,15 @@
 {
-  "name": "CinePurr",
-  "short_name": "CinePurr",
-  "description": "Watch movies together in real-time with friends! 🐱🎬",
+  "name": "KickPool",
+  "short_name": "KickPool",
+  "description": "World Cup sweepstakes with live AI commentary. Predict scores, win USDC — settled on Solana. ⚽",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
-  "background_color": "#1a1a2e",
-  "theme_color": "#ff69b4",
+  "background_color": "#030712",
+  "theme_color": "#7c3aed",
   "orientation": "any",
-  "id": "cinepurr-pwa",
+  "id": "kickpool-pwa",
   "lang": "en",
   "dir": "ltr",
   "icons": [
@@ -44,7 +44,7 @@
       "purpose": "any"
     }
   ],
-  "categories": ["entertainment", "social"],
+  "categories": ["sports", "games", "finance"],
   "screenshots": [
     {
       "src": "/screenshots/home.png",
@@ -58,29 +58,29 @@
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Watch room"
+      "label": "Pool room"
     }
   ],
   "shortcuts": [
     {
-      "name": "Create Room",
-      "short_name": "New Room",
-      "description": "Start a new watch party",
-      "url": "/?action=create",
+      "name": "Create Pool",
+      "short_name": "New Pool",
+      "description": "Start a new World Cup sweepstakes pool",
+      "url": "/pool/create",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Join Pool",
+      "short_name": "Join",
+      "description": "Join an existing pool with invite code",
+      "url": "/pool/join",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "My Profile",
       "short_name": "Profile",
-      "description": "View your profile",
+      "description": "View your profile and winnings",
       "url": "/profile",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Study Room",
-      "short_name": "Study",
-      "description": "Open study room with lofi music",
-      "url": "/study",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],

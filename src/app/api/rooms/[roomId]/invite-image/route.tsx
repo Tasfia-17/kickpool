@@ -93,7 +93,7 @@ export async function GET(
               <div style={{ width: '14px', height: '14px', background: '#28c840', borderRadius: '50%', border: '2px solid #1a1a1a' }} />
             </div>
             <span style={{ fontSize: '18px', color: '#f5f0e8', marginLeft: '12px', letterSpacing: '1px' }}>
-              🎬 CinePurr - Watch Party Invite
+              🎬 KickPool - Watch Party Invite
             </span>
           </div>
         </div>
@@ -148,7 +148,7 @@ export async function GET(
 
             {/* Host avatar - using external image */}
             <img
-              src={`https://cinepurr.me/api/avatar/${hostName}`}
+              src={`https://kickpool.me/api/avatar/${hostName}`}
               alt={hostName}
               style={{
                 width: '80px',
@@ -239,7 +239,7 @@ export async function GET(
                   borderRadius: '4px',
                 }}
               >
-                CinePurr
+                KickPool
               </span>
             </div>
 
@@ -315,7 +315,7 @@ export async function GET(
                 ▶ JOIN NOW
               </div>
               <span style={{ fontSize: '14px', color: '#6a6a6a', letterSpacing: '1px' }}>
-                cinepurr.me
+                kickpool.me
               </span>
             </div>
           </div>

@@ -5,7 +5,7 @@
  *   - Live scoreboard (TxLINE SSE)
  *   - AI Pundit commentary feed
  *   - Pool leaderboard
- *   - Group chat (reused from CinePurr)
+ *   - Group chat (reused from KickPool)
  *   - Floating match reactions
  *   - Settlement screen on match end
  */
@@ -114,7 +114,7 @@ export default function PoolRoomPage({ params: _params }: PoolRoomPageProps) {
     return () => clearInterval(interval);
   }, [poolId]);
 
-  // Socket setup — reuses CinePurr's useSocket
+  // Socket setup — reuses KickPool's useSocket
   // Pass a dummy roomId for presence; match events use pool:subscribe
   const socket = useSocket(`pool-presence:${poolId}`, session?.user ? {
     id:   session.user.id,
@@ -333,7 +333,7 @@ export default function PoolRoomPage({ params: _params }: PoolRoomPageProps) {
               </div>
             )}
 
-            {/* Chat (reused CinePurr Chat component) */}
+            {/* Chat (reused KickPool Chat component) */}
             {activeTab === 'chat' && (
               <div className="absolute inset-0">
                 <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="text-gray-600 text-sm">Loading chat…</div></div>}>

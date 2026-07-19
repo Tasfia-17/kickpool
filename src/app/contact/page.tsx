@@ -25,8 +25,8 @@ export default function ContactPage() {
       icon: Mail,
       title: 'Email',
       desc: 'Send us an email',
-      link: 'mailto:support@cinepurr.com',
-      linkText: 'support@cinepurr.com',
+      link: 'mailto:support@kickpool.com',
+      linkText: 'support@kickpool.com',
       color: 'from-pink-500 to-rose-500',
       hoverBg: 'hover:bg-pink-500/10'
     },

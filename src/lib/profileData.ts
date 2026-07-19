@@ -384,7 +384,7 @@ function buildMilestoneStamps(user: RawProfileRecord): PassportSeed[] {
       ? {
           stampKey: "membership:og",
           stampType: "membership",
-          label: "OG CinePurr Resident",
+          label: "OG KickPool Resident",
           artVariant: "star-map",
           rarity: "legendary",
         }

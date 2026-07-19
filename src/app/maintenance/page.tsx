@@ -15,7 +15,7 @@ export default function MaintenancePage() {
 
         <div className="bg-white p-6 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-left">
           <p className="font-mono text-gray-700 leading-relaxed">
-            CinePurr is currently undergoing scheduled maintenance to upgrade our systems and improve your watch party experience. 
+            KickPool is currently undergoing scheduled maintenance to upgrade our systems and improve your watch party experience. 
           </p>
           <div className="mt-4 p-3 bg-red-50 border-2 border-red-500 text-red-900 font-mono text-sm">
             Please check back again shortly. Most maintenance windows last less than 15 minutes.

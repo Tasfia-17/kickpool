@@ -72,7 +72,7 @@ async function fetchRemoteConfig(): Promise<{
       signal: controller.signal,
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'CinePurr/1.0',
+        'User-Agent': 'KickPool/1.0',
       },
     });
 

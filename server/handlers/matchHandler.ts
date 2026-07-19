@@ -8,7 +8,7 @@
  *   - Handles match finalisation + settlement trigger
  *
  * Each pool room uses Socket.io room ID: `pool:{poolId}`
- * Clients join via the standard room:join flow — reused from CinePurr.
+ * Clients join via the standard room:join flow — reused from KickPool.
  *
  * New socket events emitted by this handler:
  *   match:score_update  → { fixtureId, score1, score2, statusId, period, stats }

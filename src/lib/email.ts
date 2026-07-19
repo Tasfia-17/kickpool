@@ -2,9 +2,9 @@ import { Resend } from 'resend';
 
 // onboarding@resend.dev is Resend's test address — it can ONLY send to the
 // email registered on your Resend account. Set RESEND_FROM_EMAIL to a verified
-// sender (e.g. "CinePurr <noreply@yourdomain.com>") to send to any address.
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'CinePurr <onboarding@resend.dev>';
-const APP_NAME = 'CinePurr';
+// sender (e.g. "KickPool <noreply@yourdomain.com>") to send to any address.
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'KickPool <onboarding@resend.dev>';
+const APP_NAME = 'KickPool';
 const APP_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
 // Lazy-initialize Resend client to avoid build-time errors

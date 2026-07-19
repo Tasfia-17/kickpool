@@ -1,5 +1,5 @@
 /**
- * CinePurr Server — Shared Helper Functions
+ * KickPool Server — Shared Helper Functions
  *
  * Utilities extracted from the monolithic index.ts that are shared
  * across multiple domain handlers. Includes:

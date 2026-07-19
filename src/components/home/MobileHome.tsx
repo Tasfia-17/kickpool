@@ -689,7 +689,7 @@ export function MobileHome({
               )}
 
               <div className="text-center py-4">
-                <p className="font-mono text-xs opacity-40">{'\u00A9'} {new Date().getFullYear()} CinePurr</p>
+                <p className="font-mono text-xs opacity-40">{'\u00A9'} {new Date().getFullYear()} KickPool</p>
               </div>
             </m.div>
           )}

@@ -302,7 +302,7 @@ export default function NewsPage() {
           <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" className="underline">
             The Movie Database (TMDB)
           </a>
-          . Not affiliated with CinePurr.
+          . Not affiliated with KickPool.
         </p>
       </div>
     </main>

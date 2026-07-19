@@ -14,12 +14,12 @@ export function ShareRoomModal({ roomId, roomName, onClose }: ShareRoomModalProp
   const { isDarkMode, currentTheme } = usePokemonTheme();
   const [copied, setCopied] = useState(false);
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cinepurr.me';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kickpool.me';
   // Use invite page URL for sharing so recipients see clickable invite card
   const roomUrl = `${baseUrl}/invite/${roomId}`;
   const inviteImageUrl = `${baseUrl}/api/rooms/${roomId}/invite-image`;
 
-  const shareText = `🐱 Join my watch party on CinePurr!\n"${roomName}"\n🎬 Watch together in real-time →`;
+  const shareText = `🐱 Join my watch party on KickPool!\n"${roomName}"\n🎬 Watch together in real-time →`;
 
   const copyLink = async () => {
     try {
@@ -42,7 +42,7 @@ export function ShareRoomModal({ roomId, roomName, onClose }: ShareRoomModalProp
   const shareNative = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: `Join ${roomName} on CinePurr`, text: shareText, url: roomUrl });
+        await navigator.share({ title: `Join ${roomName} on KickPool`, text: shareText, url: roomUrl });
       } catch { /* user cancelled */ }
     }
   };

@@ -1,5 +1,5 @@
 /**
- * CinePurr — Server Entry Point (Orchestrator)
+ * KickPool — Server Entry Point (Orchestrator)
  *
  * This is the THIN orchestrator that replaces the original 2391-line
  * monolithic index.ts. It owns ONLY infrastructure concerns:
@@ -108,7 +108,7 @@ if (CORS_ORIGIN) {
 } else if (PUBLIC_TUNNEL && process.env.NODE_ENV !== 'production') {
   allowedOrigins = [
     'http://localhost:3000', 'http://localhost:4000',
-    'https://cinepurr.netlify.app',
+    'https://kickpool.netlify.app',
     ...TUNNEL_ORIGIN_PATTERNS,
   ];
   logger.warn('[CORS] Tunnel origins enabled (DEV ONLY). Disable PUBLIC_TUNNEL in production.');

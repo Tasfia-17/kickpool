@@ -51,7 +51,7 @@ export default function Logo({ size = 'md', className = '', onClick }: LogoProps
     >
       <Image
         src="/Logo_orange_tabby.jpg"
-        alt="CinePurr"
+        alt="KickPool"
         width={dims.width}
         height={dims.height}
         className={`${sizeClasses[size]} w-auto transition-[filter] duration-500`}

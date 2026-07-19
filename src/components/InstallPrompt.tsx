@@ -95,7 +95,7 @@ export default function InstallPrompt() {
             </div>
 
             <div className="flex-1">
-              <h3 className="text-white font-bold text-sm">Install CinePurr</h3>
+              <h3 className="text-white font-bold text-sm">Install KickPool</h3>
               <p className="text-white/80 text-xs mt-0.5">
                 {isIOS
                   ? 'Tap Share then "Add to Home Screen"'

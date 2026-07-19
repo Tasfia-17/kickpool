@@ -99,7 +99,7 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-bold">Your Privacy Matters</h2>
             </div>
             <p className={`leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              At CinePurr, we take your privacy seriously. This policy explains how we collect, use, and protect your information.
+              At KickPool, we take your privacy seriously. This policy explains how we collect, use, and protect your information.
             </p>
           </div>
         </motion.div>

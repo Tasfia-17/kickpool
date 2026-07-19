@@ -56,7 +56,7 @@ export function InviteClient({ roomId, room }: InviteClientProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🐱</span>
-                <span className="font-bold text-amber-900 dark:text-amber-100">CinePurr</span>
+                <span className="font-bold text-amber-900 dark:text-amber-100">KickPool</span>
               </div>
               <div className="px-3 py-1 bg-amber-500 text-white text-xs font-bold rounded-full">
                 INVITE

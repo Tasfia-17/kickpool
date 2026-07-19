@@ -14,7 +14,7 @@ export function PrivacyWindow() {
             Your Privacy Matters
           </h2>
           <p className="opacity-80 leading-relaxed">
-            At CinePurr, we take your privacy seriously. This policy explains how we collect, use, and protect your information.
+            At KickPool, we take your privacy seriously. This policy explains how we collect, use, and protect your information.
           </p>
         </section>
 
@@ -79,7 +79,7 @@ export function PrivacyWindow() {
         <div className="pt-3 border-t border-black/10 dark:border-white/10">
           <h3 className="font-black text-sm mb-2">Terms of Service</h3>
           <p className="opacity-80 text-xs leading-relaxed">
-            By using CinePurr, you agree to use the platform responsibly, respect other users, and not share 
+            By using KickPool, you agree to use the platform responsibly, respect other users, and not share 
             copyrighted content without permission. We reserve the right to terminate accounts that violate these terms.
           </p>
         </div>

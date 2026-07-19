@@ -7,9 +7,9 @@ const ALLOWED_ORIGINS = [
   'http://localhost:4000',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:4000',
-  'https://cinepurr.me',
-  'https://www.cinepurr.me',
-  'https://cinepurr.netlify.app',
+  'https://kickpool.me',
+  'https://www.kickpool.me',
+  'https://kickpool.netlify.app',
   // Add production socket server domain if different
   process.env.NEXT_PUBLIC_SITE_URL,
   process.env.NEXTAUTH_URL,

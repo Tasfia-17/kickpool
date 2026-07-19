@@ -51,7 +51,7 @@ export default async function AdminLayout({
   if (!session?.user) {
     return (
       <AccessDeniedPanel
-        description="Sign in with an admin account to open the CinePurr control panel."
+        description="Sign in with an admin account to open the KickPool control panel."
         primaryHref="/login"
         primaryLabel="Sign In"
       />
@@ -61,7 +61,7 @@ export default async function AdminLayout({
   if (!isAdminUser(session.user.role)) {
     return (
       <AccessDeniedPanel
-        description="You are signed in, but your account does not have admin access to the CinePurr control panel."
+        description="You are signed in, but your account does not have admin access to the KickPool control panel."
         primaryHref="/login"
         primaryLabel="Switch Account"
       />
@@ -84,7 +84,7 @@ export default async function AdminLayout({
         <div className="hidden md:block p-6 border-b-4 border-black">
           <Logo size="md" />
           <div className="mt-4 bg-black text-white p-2 font-mono text-xs shadow-[2px_2px_0px_0px_rgba(139,92,246,1)]">
-            <span className="text-purple-400">root@cinepurr:~#</span> ./admin
+            <span className="text-purple-400">root@kickpool:~#</span> ./admin
             <br />
             <span className="text-green-400">ACCESS GRANTED</span>
           </div>

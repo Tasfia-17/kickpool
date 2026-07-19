@@ -9,7 +9,7 @@ import StudyClient from './StudyClient';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Study Room | CinePurr',
+  title: 'Study Room | KickPool',
   description:
     'Step into a cozy lo-fi study habitat with one active task, ambient focus controls, and a persistent journal.',
 };

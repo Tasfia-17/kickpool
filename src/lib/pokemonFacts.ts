@@ -1,4 +1,4 @@
-// Pokemon facts for CinePurr - Fun Pokemon trivia
+// Pokemon facts for KickPool - Fun Pokemon trivia
 // Uses PokeAPI animated sprites for avatars
 
 const SPRITE_BASE = '/sprites/animated';
@@ -8,7 +8,7 @@ const pokemonSprite = (id: number) => `${SPRITE_BASE}/${id}.gif`;
 export const POKEMON_FACTS_EN = [
   // Pikachu & Electric Types
   { fact: "Pikachu's name comes from 'pika' (sparkle) + 'chu' (mouse squeak)!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
-  { fact: "Pikachu was originally going to be CinePurr's mascot from day one!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
+  { fact: "Pikachu was originally going to be KickPool's mascot from day one!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
   { fact: "Jolteon has cells that generate electricity when stressed!", pokemon: "Jolteon", avatar: pokemonSprite(135) },
   { fact: "Raichu can store over 100,000 volts of electricity!", pokemon: "Raichu", avatar: pokemonSprite(26) },
 
@@ -54,7 +54,7 @@ export const POKEMON_FACTS_EN = [
   { fact: "Snorlax eats 900 pounds of food per day then falls asleep!", pokemon: "Snorlax", avatar: pokemonSprite(143) },
   { fact: "Magikarp is nearly useless but evolves into mighty Gyarados!", pokemon: "Magikarp", avatar: pokemonSprite(129) },
 
-  // CinePurr themed
+  // KickPool themed
   { fact: "Pokémon love watching movies together - just like us!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
   { fact: "The best way to watch is synced with friends - no lag!", pokemon: "Eevee", avatar: pokemonSprite(133) },
   { fact: "Every trainer needs a watch party room. Create yours!", pokemon: "Charizard", avatar: pokemonSprite(6) },
@@ -70,7 +70,7 @@ export const POKEMON_FACTS_EN = [
 export const POKEMON_FACTS_TR = [
   // Pikachu & Elektrik Tipleri
   { fact: "Pikachu'nun adı 'pika' (parıltı) + 'chu' (fare sesi) kelimelerinden gelir!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
-  { fact: "Pikachu en başından beri CinePurr'un maskotu olacaktı!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
+  { fact: "Pikachu en başından beri KickPool'un maskotu olacaktı!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
   { fact: "Jolteon stres altında elektrik üreten hücrelere sahip!", pokemon: "Jolteon", avatar: pokemonSprite(135) },
   { fact: "Raichu 100.000 voltun üzerinde elektrik depolayabilir!", pokemon: "Raichu", avatar: pokemonSprite(26) },
 
@@ -116,7 +116,7 @@ export const POKEMON_FACTS_TR = [
   { fact: "Snorlax günde 400 kilo yemek yer sonra uykuya dalar!", pokemon: "Snorlax", avatar: pokemonSprite(143) },
   { fact: "Magikarp neredeyse işe yaramaz ama güçlü Gyarados'a evrimleşir!", pokemon: "Magikarp", avatar: pokemonSprite(129) },
 
-  // CinePurr temalı
+  // KickPool temalı
   { fact: "Pokémon'lar da tıpkı bizim gibi birlikte film izlemeyi sever!", pokemon: "Pikachu", avatar: pokemonSprite(25) },
   { fact: "İzlemenin en iyi yolu arkadaşlarla senkronize - gecikme yok!", pokemon: "Eevee", avatar: pokemonSprite(133) },
   { fact: "Her eğitmenin bir izleme partisi odasına ihtiyacı var. Kendininkini oluştur!", pokemon: "Charizard", avatar: pokemonSprite(6) },

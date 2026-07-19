@@ -1,7 +1,7 @@
 /**
  * KickPool — Match Goal Reactions (floating emojis)
  *
- * Reused from CinePurr's VideoReactions — adapted for match events.
+ * Reused from KickPool's VideoReactions — adapted for match events.
  * Shows floating emojis on goals, cards, and other notable events.
  */
 'use client';

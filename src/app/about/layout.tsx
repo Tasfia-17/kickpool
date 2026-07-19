@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 
-const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://cinepurr.me';
+const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || 'https://kickpool.me';
 
 export const metadata: Metadata = {
-  title: 'About CinePurr — Free Watch Party App for YouTube & Videos',
+  title: 'About KickPool — Free Watch Party App for YouTube & Videos',
   description:
-    'CinePurr lets you watch YouTube videos with friends for free — no login required. Sync video playback in real-time, chat, play games, and enjoy watch parties from anywhere. The best free watch-together site.',
+    'KickPool lets you watch YouTube videos with friends for free — no login required. Sync video playback in real-time, chat, play games, and enjoy watch parties from anywhere. The best free watch-together site.',
   keywords: [
     'watch YouTube with friends free',
     'sync video call for movies',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     'online movie night',
     'watch party no account needed',
     'real-time video sync',
-    'CinePurr',
+    'KickPool',
     'watch together app',
   ],
   alternates: {
@@ -26,26 +26,26 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     url: `${baseUrl}/about`,
-    title: 'About CinePurr — Free Watch Party App for YouTube & Videos',
+    title: 'About KickPool — Free Watch Party App for YouTube & Videos',
     description:
-      'CinePurr is the free, no-login watch party platform. Sync YouTube and videos with friends in real-time — chat, play minigames, earn achievements, and stay cozy together. 🐱🎬',
-    siteName: 'CinePurr',
+      'KickPool is the free, no-login watch party platform. Sync YouTube and videos with friends in real-time — chat, play minigames, earn achievements, and stay cozy together. 🐱🎬',
+    siteName: 'KickPool',
     images: [
       {
         url: `${baseUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'CinePurr — Watch Movies & Videos Together',
+        alt: 'KickPool — Watch Movies & Videos Together',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About CinePurr — Free Watch Party App',
+    title: 'About KickPool — Free Watch Party App',
     description:
       'Watch YouTube with friends for free. Sync playback, chat, and play games together — no account required. 🐱🎬',
     images: [`${baseUrl}/og-image.png`],
-    creator: '@cinepurr',
+    creator: '@kickpool',
   },
 };
 

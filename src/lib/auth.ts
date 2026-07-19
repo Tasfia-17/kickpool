@@ -7,7 +7,7 @@ import { Prisma } from "@prisma/client"
 declare global {
   // Prevent duplicate cleanup intervals during hot-reload in development.
   // eslint-disable-next-line no-var
-  var __cinepurr_auth_cleanup_interval_set: boolean | undefined;
+  var __kickpool_auth_cleanup_interval_set: boolean | undefined;
 }
 
 // Simple in-memory rate limiter for login attempts
@@ -44,7 +44,7 @@ const DEMO_AUTH_USERS = [
 let ensureDemoUsersPromise: Promise<void> | null = null;
 
 // Periodic cleanup to prevent memory leak from failed login attempts
-if (typeof setInterval !== 'undefined' && !globalThis.__cinepurr_auth_cleanup_interval_set) {
+if (typeof setInterval !== 'undefined' && !globalThis.__kickpool_auth_cleanup_interval_set) {
   setInterval(() => {
     const now = Date.now();
     loginAttempts.forEach((record, username) => {
@@ -53,7 +53,7 @@ if (typeof setInterval !== 'undefined' && !globalThis.__cinepurr_auth_cleanup_in
       }
     });
   }, LOCKOUT_TIME);
-  globalThis.__cinepurr_auth_cleanup_interval_set = true;
+  globalThis.__kickpool_auth_cleanup_interval_set = true;
 }
 
 function checkLoginRateLimit(username: string): boolean {

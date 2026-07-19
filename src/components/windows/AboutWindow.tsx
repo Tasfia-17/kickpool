@@ -9,12 +9,12 @@ export function AboutWindow() {
         <section>
           <h2 className="text-lg font-black mb-3 flex items-center gap-2">
             <Film size={20} />
-            What is CinePurr?
+            What is KickPool?
           </h2>
           <p className="opacity-80 leading-relaxed">
-            CinePurr is a platform for watching videos together in real-time. Create rooms, invite friends, 
+            KickPool is a platform for watching videos together in real-time. Create rooms, invite friends, 
             and enjoy synchronized viewing experiences. Whether you&apos;re watching YouTube videos, movies, or TV shows, 
-            CinePurr keeps everyone in sync.
+            KickPool keeps everyone in sync.
           </p>
         </section>
 
@@ -53,7 +53,7 @@ export function AboutWindow() {
             Our Mission
           </h2>
           <p className="opacity-80 leading-relaxed">
-            CinePurr was created to bring people together through shared entertainment. We believe that watching 
+            KickPool was created to bring people together through shared entertainment. We believe that watching 
             videos together, even when apart, creates meaningful connections and memorable experiences.
           </p>
         </section>

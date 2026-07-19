@@ -14,13 +14,13 @@ export function ContactWindow() {
 
           <div className="space-y-3">
             <a 
-              href="mailto:support@cinepurr.com"
+              href="mailto:support@kickpool.com"
               className="flex items-center gap-3 p-3 border-2 border-black dark:border-white rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             >
               <Mail size={24} className="text-pink-500 flex-shrink-0" />
               <div>
                 <h3 className="font-black text-sm">Email</h3>
-                <p className="text-xs opacity-70">support@cinepurr.com</p>
+                <p className="text-xs opacity-70">support@kickpool.com</p>
               </div>
             </a>
 

@@ -17,7 +17,7 @@ interface ChatMessage {
 
 const WELCOME_MESSAGE: ChatMessage = {
     id: 'welcome',
-    text: "Hey there! 🐱✨ I'm **PurrBot**, your CinePurr AI concierge! Ask me anything about rooms, XP, quests, themes, friends, or any feature. I'm here to help!",
+    text: "Hey there! 🐱✨ I'm **PurrBot**, your KickPool AI concierge! Ask me anything about rooms, XP, quests, themes, friends, or any feature. I'm here to help!",
     sender: 'bot',
     timestamp: Date.now(),
     suggestions: ['How do I create a room?', 'What is XP?', 'Tell me about themes', 'What features exist?'],

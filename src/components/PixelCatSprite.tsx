@@ -4,7 +4,7 @@ import React, { memo } from 'react';
 import { usePokemonTheme } from '@/components/PokemonThemeProvider';
 
 /**
- * Cute Pixel Cat Sprites - Adorable cat mascots for CinePurr
+ * Cute Pixel Cat Sprites - Adorable cat mascots for KickPool
  * These are simple pixel art cats that match the retro aesthetic
  */
 
@@ -15,7 +15,7 @@ interface PixelCatSpriteProps {
   animate?: boolean;
 }
 
-// Cute pixel cat SVGs - hand-crafted for CinePurr!
+// Cute pixel cat SVGs - hand-crafted for KickPool!
 function PixelCatSprite({ 
   size = 64, 
   className = '', 
@@ -133,7 +133,7 @@ function PixelCatSprite({
         );
 
       case 'watching':
-        // Cat watching a screen (perfect for CinePurr!)
+        // Cat watching a screen (perfect for KickPool!)
         return (
           <svg viewBox="0 0 16 16" style={{ width: size, height: size }} className={animationClass}>
             {/* Body */}
